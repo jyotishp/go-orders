@@ -14,6 +14,17 @@ message Order {
   int32 Time = 8;
 }
 
+message Item {
+  int32 Id = 1;
+  float Amount = 2;
+  float Discount = 3;
+  string Cuisine = 4;
+}
+
+message ListItems {
+  repeated Item items = 1;
+}
+
 message GetReq {
   int32 Id = 1;
 }
@@ -52,50 +63,184 @@ message CuisineCustomers {
   map<string, CustomerList> Cuisines = 1;
 }
 
+message LoginReq {
+  LoginCred cred = 1;
+}
+
+message LoginCred {
+  string user = 1;
+  string pass = 2;
+}
+
+message LoginRes {
+  string token = 1;
+}
+
+message OrderReq {
+  Order order = 1;
+}
+
+message PostRes {
+  string response = 1;
+}
+
+message CustomerReq {
+  Customer customer = 1;
+}
+
+message RestReq {
+  Restaurant restaurant = 1;
+}
+
+message PostItemReq {
+  int32 Id = 1;
+  Item item = 2;
+}
+
+message ItemReq {
+  message Limits {
+    int32 low = 1;
+    int32 high = 2;
+  }
+  int32 Id = 1;
+  int32 itemId = 2;
+  Limits limit = 3;
+}
+
 service Analysis {
-  rpc GetOrder(GetReq) returns (Order) {
+
+  rpc Login(LoginReq) returns (LoginRes) {
     option (google.api.http) = {
-      get: "/v1/orders"
+      post: "v1/login",
+      body: "cred"
     };
   }
 
-  rpc GetCustomer(GetReq) returns (Customer) {
+  rpc GetOrder(GetReq) returns (Order) {
+    option (google.api.http) = {
+      get: "/v1/orders/{Id}"
+    };
+  }
+
+  rpc PostOrder(OrderReq) returns (PostRes) {
+    option (google.api.http) = {
+      post: "/v1/orders",
+      body: "order"
+    };
+  }
+
+  rpc PutOrder(OrderReq) returns (PostRes) {
+    option (google.api.http) = {
+      put: "/v1/orders/{order.Id}"
+      body: "order"
+    };
+  }
+
+  rpc GetAllCustomers(GetReq) returns (Customer) {
     option (google.api.http) = {
       get: "/v1/customers"
     };
   }
 
+  rpc GetCustomer(CustomerReq) returns (Customer) {
+    option (google.api.http) = {
+      get: "/v1/customers/{customer.Id}"
+    };
+  }
+
+  rpc PutCustomer(CustomerReq) returns (PostRes) {
+    option (google.api.http) = {
+      put: "/v1/customers/{customer.Id}",
+      body: "customer"
+    };
+  }
+
+  rpc DeleteOrder(OrderReq) returns (PostRes) {
+    option (google.api.http) = {
+      delete: "/v1/orders/{order.Id}"
+    };
+  }
+
   rpc GetRestaurant(GetReq) returns (Restaurant) {
     option (google.api.http) = {
-      get: "/v1/restaurants"
+      get: "/v1/restaurants/{Id}"
     };
   }
 
-  rpc TopRestaurants(Length) returns (RestaurantList) {
+  rpc PostRestaurant(RestReq) returns (PostRes) {
     option (google.api.http) = {
-      get: "/v1/restaurants/top"
+      post: "/v1/restaurants",
+      body: "restaurant"
     };
   }
 
-  rpc WorstRestaurants(Length) returns (RestaurantList) {
+  rpc GetRestaurantAllItems(GetReq) returns (ListItems) {
     option (google.api.http) = {
-      get: "/v1/restaurants/worst"
+      get: "/v1/restaurant/{Id}/items"
     };
   }
 
-  rpc TopStateCuisines(Length) returns (StateCuisines) {
+  rpc GetRestaurantRangeItems(ItemReq) returns (ListItems) {
     option (google.api.http) = {
-      get: "/v1/state-cuisines/top"
+      get: "/v1/restaurant/{Id}/items?min={limit.low}&max={limit.high}"
     };
   }
 
-  rpc WorstStateCuisines(Length) returns (StateCuisines) {
+  rpc GetRestaurantItem(ItemReq) returns (Item) {
     option (google.api.http) = {
-      get: "/v1/state-cuisines/worst"
+      get: "/v1/restaurant/{Id}/items/{itemId}"
     };
   }
 
-  rpc CusineCustomerMap(Length) returns (CuisineCustomers) {
+  rpc PostRestaurantItems(PostItemReq) returns (PostRes) {
+    option (google.api.http) = {
+      post: "/v1/restaurant/{Id}/items",
+      body: "item"
+    };
+  }
+
+  rpc PutRestaurantItems(PostItemReq) returns (PostRes) {
+    option (google.api.http) = {
+      put: "/v1/restaurant/{Id}/items/{item.Id}",
+      body: "item"
+      addition_bindings {
+        put: "/v1/restaurant/{Id}/items"
+        body: "item"
+      }
+    };
+  }
+
+  rpc DeleteRestaurantItems(PostItemReq) returns (PostRes) {
+    option (google.api.htpp) = {
+      delete: "/v1/restaurant/{Id}/items/{item.Id}"
+    };
+  }
+
+  rpc TopRestaurants(GetReq) returns (RestaurantList) {
+    option (google.api.http) = {
+      get: "/v1/restaurants/top/{Id}"
+    };
+  }
+
+  rpc WorstRestaurants(GetReq) returns (RestaurantList) {
+    option (google.api.http) = {
+      get: "/v1/restaurants/worst/{Id}"
+    };
+  }
+
+  rpc TopStateCuisines(GetReq) returns (StateCuisines) {
+    option (google.api.http) = {
+      get: "/v1/state-cuisines/top/{Id}"
+    };
+  }
+
+  rpc WorstStateCuisines(GetReq) returns (StateCuisines) {
+    option (google.api.http) = {
+      get: "/v1/state-cuisines/worst/{Id}"
+    };
+  }
+
+  rpc CuisineCustomerMap(Length) returns (CuisineCustomers) {
     option (google.api.http) = {
       get: "/v1/cuisines-demographics"
     };
