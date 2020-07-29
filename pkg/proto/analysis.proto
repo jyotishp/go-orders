@@ -15,14 +15,16 @@ message Order {
   int32 time = 8;
 }
 
+// Item
 message Item {
-  int32 Id = 1;
-  float Amount = 2;
-  float Discount = 3;
-  string Cuisine = 4;
+  int32 id = 1;
+  float amount = 2;
+  float discount = 3;
+  string cuisine = 4;
 }
 
-message ListItems {
+// Slice of Items
+message ItemList {
   repeated Item items = 1;
 }
 
@@ -59,12 +61,13 @@ message StateCuisines {
   map<string, CuisineList> states = 1;
 }
 
+// List of customers
+message CustomerList {
+  repeated Customer customer = 1;
+}
+
 // Customers per cuisine
 message CuisineCustomers {
-  // List of customers
-  message CustomerList {
-    repeated Customer customer = 1;
-  }
   map<string, CustomerList> cuisines = 1;
 }
 
@@ -98,7 +101,7 @@ message RestReq {
 }
 
 message PostItemReq {
-  int32 Id = 1;
+  int32 id = 1;
   Item item = 2;
 }
 
@@ -107,27 +110,29 @@ message ItemReq {
     int32 low = 1;
     int32 high = 2;
   }
-  int32 Id = 1;
-  int32 itemId = 2;
+  int32 id = 1;
+  int32 item_id = 2;
   Limits limit = 3;
 }
 
 service Analysis {
 
+  // Gets user credentials and returns jwt token
   rpc Login(LoginReq) returns (LoginRes) {
     option (google.api.http) = {
       post: "v1/login",
       body: "cred"
     };
   }
-  
+
   // Gets an order given its ID
   rpc GetOrder(GetReq) returns (Order) {
     option (google.api.http) = {
-      get: "/v1/orders/{Id}"
+      get: "/v1/orders/{id}"
     };
   }
 
+  // Gets order(JSON) and adds it to db
   rpc PostOrder(OrderReq) returns (PostRes) {
     option (google.api.http) = {
       post: "/v1/orders",
@@ -135,45 +140,51 @@ service Analysis {
     };
   }
 
+  // Gets order(JSON) and updates order in db
   rpc PutOrder(OrderReq) returns (PostRes) {
     option (google.api.http) = {
-      put: "/v1/orders/{order.Id}"
+      put: "/v1/orders/{order.id}"
       body: "order"
     };
   }
 
-  rpc GetAllCustomers(GetReq) returns (Customer) {
+  // Returns all Customers
+  rpc GetAllCustomers(GetReq) returns (CustomerList) {
     option (google.api.http) = {
       get: "/v1/customers"
     };
   }
 
+  // Returns Customer of specific ID
   rpc GetCustomer(CustomerReq) returns (Customer) {
     option (google.api.http) = {
-      get: "/v1/customers/{customer.Id}"
+      get: "/v1/customers/{customer.id}"
     };
   }
 
+  // Updates Customer of given ID in the db
   rpc PutCustomer(CustomerReq) returns (PostRes) {
     option (google.api.http) = {
-      put: "/v1/customers/{customer.Id}",
+      put: "/v1/customers/{customer.id}",
       body: "customer"
     };
   }
 
+  // Deletes Order of given Order ID
   rpc DeleteOrder(OrderReq) returns (PostRes) {
     option (google.api.http) = {
-      delete: "/v1/orders/{order.Id}"
+      delete: "/v1/orders/{order.id}"
     };
   }
 
   // Get a restaurant given its ID
   rpc GetRestaurant(GetReq) returns (Restaurant) {
     option (google.api.http) = {
-      get: "/v1/restaurants/{Id}"
+      get: "/v1/restaurants/{id}"
     };
   }
 
+  // Gets a Restaurant and adds it to the db
   rpc PostRestaurant(RestReq) returns (PostRes) {
     option (google.api.http) = {
       post: "/v1/restaurants",
@@ -181,73 +192,79 @@ service Analysis {
     };
   }
 
-  rpc GetRestaurantAllItems(GetReq) returns (ListItems) {
+  // Gets a Restaurant ID and returns all of it's items
+  rpc GetRestaurantAllItems(GetReq) returns (ItemList) {
     option (google.api.http) = {
-      get: "/v1/restaurant/{Id}/items"
+      get: "/v1/restaurant/{id}/items"
     };
   }
 
-  rpc GetRestaurantRangeItems(ItemReq) returns (ListItems) {
+  // Gets a min and max amount range and returns the list of items of given Restaurant ID that belong to this range
+  rpc GetRestaurantRangeItems(ItemReq) returns (ItemList) {
     option (google.api.http) = {
-      get: "/v1/restaurant/{Id}/items?min={limit.low}&max={limit.high}"
+      get: "/v1/restaurant/{id}/items?min={limit.low}&max={limit.high}"
     };
   }
 
+  // Gets Restaurant ID and Item ID and returns respective item
   rpc GetRestaurantItem(ItemReq) returns (Item) {
     option (google.api.http) = {
-      get: "/v1/restaurant/{Id}/items/{itemId}"
+      get: "/v1/restaurant/{id}/items/{item_id}"
     };
   }
 
+  // Gets an Item(JSON) and adds it to Restaurant of given ID in the db
   rpc PostRestaurantItems(PostItemReq) returns (PostRes) {
     option (google.api.http) = {
-      post: "/v1/restaurant/{Id}/items",
+      post: "/v1/restaurant/{id}/items",
       body: "item"
     };
   }
 
+  // Gets an Item(JSON) and updates it to Restaurant of given ID in the db
   rpc PutRestaurantItems(PostItemReq) returns (PostRes) {
     option (google.api.http) = {
-      put: "/v1/restaurant/{Id}/items/{item.Id}",
+      put: "/v1/restaurant/{id}/items/{item_id}",
       body: "item"
       addition_bindings {
-        put: "/v1/restaurant/{Id}/items"
+        put: "/v1/restaurant/{id}/items"
         body: "item"
       }
     };
   }
 
+  // Deletes Item of given Item ID and Restaurant ID from db
   rpc DeleteRestaurantItems(PostItemReq) returns (PostRes) {
     option (google.api.htpp) = {
-      delete: "/v1/restaurant/{Id}/items/{item.Id}"
+      delete: "/v1/restaurant/{Id}/items/{item_id}"
     };
   }
 
   // Get the top performing restaurants by order count
   rpc TopRestaurants(GetReq) returns (RestaurantList) {
     option (google.api.http) = {
-      get: "/v1/restaurants/top/{Id}"
+      get: "/v1/restaurants/top/{id}"
     };
   }
 
   // Get the worst performing restaurants by order count
   rpc WorstRestaurants(GetReq) returns (RestaurantList) {
     option (google.api.http) = {
-      get: "/v1/restaurants/worst/{Id}"
+      get: "/v1/restaurants/worst/{id}"
     };
   }
 
   // Get the most ordered cuisines for states
   rpc TopStateCuisines(GetReq) returns (StateCuisines) {
     option (google.api.http) = {
-      get: "/v1/state-cuisines/top/{Id}"
+      get: "/v1/state-cuisines/top/{id}"
     };
   }
 
   // Get the least ordered cuisines for states
   rpc WorstStateCuisines(GetReq) returns (StateCuisines) {
     option (google.api.http) = {
-      get: "/v1/state-cuisines/worst/{Id}"
+      get: "/v1/state-cuisines/worst/{id}"
     };
   }
 
