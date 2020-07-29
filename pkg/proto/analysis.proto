@@ -3,98 +3,117 @@ package analysis;
 option go_package="pkg/proto";
 import "google/api/annotations.proto";
 
+// Order
 message Order {
-  int32 Id = 1;
-  float Discount = 2;
-  float Amount = 3;
-  string PaymentMode = 4;
-  int32 Rating = 5;
-  int32 Duration = 6;
-  string Cuisine = 7;
-  int32 Time = 8;
+  int32 id = 1;
+  float discount = 2;
+  float amount = 3;
+  string payment_method = 4;
+  int32 rating = 5;
+  int32 duration = 6;
+  string cuisine = 7;
+  int32 time = 8;
 }
 
+// Request parameters
 message GetReq {
-  int32 Id = 1;
+  int32 id = 1;
 }
 
+// Length to retrieve
 message Length {
   int32 length = 1;
 }
 
+// Customer
 message Customer {
-  int32 Id = 1;
-  string Name = 2;
-  string State = 3;
+  int32 id = 1;
+  string name = 2;
+  string state = 3;
 }
 
+// Restaurant
 message Restaurant {
-  int32 Id = 1;
-  string Name = 2;
-  string State = 3;
+  int32 id = 1;
+  string name = 2;
+  string state = 3;
 }
 
+// List of Restaurants
 message RestaurantList {
-  repeated Restaurant Rest = 1;
+  repeated Restaurant restaurants = 1;
 }
 
+// Cuisines per state
 message StateCuisines {
+  // List of cuisines
   message CuisineList {
-    repeated string Cuisine = 1;
+    repeated string cuisine = 1;
   }
-  map<string, CuisineList> States = 1;
+  map<string, CuisineList> states = 1;
 }
 
+// Customers per cuisine
 message CuisineCustomers {
+  // List of customers
   message CustomerList {
-    repeated Customer Customer = 1;
+    repeated Customer customer = 1;
   }
-  map<string, CustomerList> Cuisines = 1;
+  map<string, CustomerList> cuisines = 1;
 }
 
+// Routes to analyze the order data
 service Analysis {
+  // Gets an order given its ID
   rpc GetOrder(GetReq) returns (Order) {
     option (google.api.http) = {
       get: "/v1/orders"
     };
   }
 
+  // Get a customer given its ID
   rpc GetCustomer(GetReq) returns (Customer) {
     option (google.api.http) = {
       get: "/v1/customers"
     };
   }
 
+  // Get a restaurant given its ID
   rpc GetRestaurant(GetReq) returns (Restaurant) {
     option (google.api.http) = {
       get: "/v1/restaurants"
     };
   }
 
+  // Get the top performing restaurants by order count
   rpc TopRestaurants(Length) returns (RestaurantList) {
     option (google.api.http) = {
       get: "/v1/restaurants/top"
     };
   }
 
+  // Get the worst performing restaurants by order count
   rpc WorstRestaurants(Length) returns (RestaurantList) {
     option (google.api.http) = {
       get: "/v1/restaurants/worst"
     };
   }
 
+  // Get the most ordered cuisines for states
   rpc TopStateCuisines(Length) returns (StateCuisines) {
     option (google.api.http) = {
       get: "/v1/state-cuisines/top"
     };
   }
 
+  // Get the least ordered cuisines for states
   rpc WorstStateCuisines(Length) returns (StateCuisines) {
     option (google.api.http) = {
       get: "/v1/state-cuisines/worst"
     };
   }
 
+  // Get the customer base for cuisines
   rpc CusineCustomerMap(Length) returns (CuisineCustomers) {
     option (google.api.http) = {
       get: "/v1/cuisines-demographics"
