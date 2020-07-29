@@ -1,0 +1,103 @@
+syntax = "proto3";
+package analysis;
+option go_package="pkg/proto";
+import "google/api/annotations.proto";
+
+message Order {
+  int32 Id = 1;
+  float Discount = 2;
+  float Amount = 3;
+  string PaymentMode = 4;
+  int32 Rating = 5;
+  int32 Duration = 6;
+  string Cuisine = 7;
+  int32 Time = 8;
+}
+
+message GetReq {
+  int32 Id = 1;
+}
+
+message Length {
+  int32 length = 1;
+}
+
+message Customer {
+  int32 Id = 1;
+  string Name = 2;
+  string State = 3;
+}
+
+message Restaurant {
+  int32 Id = 1;
+  string Name = 2;
+  string State = 3;
+}
+
+message RestaurantList {
+  repeated Restaurant Rest = 1;
+}
+
+message StateCuisines {
+  message CuisineList {
+    repeated string Cuisine = 1;
+  }
+  map<string, CuisineList> States = 1;
+}
+
+message CuisineCustomers {
+  message CustomerList {
+    repeated Customer Customer = 1;
+  }
+  map<string, CustomerList> Cuisines = 1;
+}
+
+service Analysis {
+  rpc GetOrder(GetReq) returns (Order) {
+    option (google.api.http) = {
+      get: "/v1/orders"
+    };
+  }
+
+  rpc GetCustomer(GetReq) returns (Customer) {
+    option (google.api.http) = {
+      get: "/v1/customers"
+    };
+  }
+
+  rpc GetRestaurant(GetReq) returns (Restaurant) {
+    option (google.api.http) = {
+      get: "/v1/restaurants"
+    };
+  }
+
+  rpc TopRestaurants(Length) returns (RestaurantList) {
+    option (google.api.http) = {
+      get: "/v1/restaurants/top"
+    };
+  }
+
+  rpc WorstRestaurants(Length) returns (RestaurantList) {
+    option (google.api.http) = {
+      get: "/v1/restaurants/worst"
+    };
+  }
+
+  rpc TopStateCuisines(Length) returns (StateCuisines) {
+    option (google.api.http) = {
+      get: "/v1/state-cuisines/top"
+    };
+  }
+
+  rpc WorstStateCuisines(Length) returns (StateCuisines) {
+    option (google.api.http) = {
+      get: "/v1/state-cuisines/worst"
+    };
+  }
+
+  rpc CusineCustomerMap(Length) returns (CuisineCustomers) {
+    option (google.api.http) = {
+      get: "/v1/cuisines-demographics"
+    };
+  }
+}

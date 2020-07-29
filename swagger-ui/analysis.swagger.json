@@ -1,0 +1,418 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "analysis.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/cuisines-demographics": {
+      "get": {
+        "operationId": "Analysis_CusineCustomerMap",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/analysisCuisineCustomers"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "length",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Analysis"
+        ]
+      }
+    },
+    "/v1/customers": {
+      "get": {
+        "operationId": "Analysis_GetCustomer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/analysisCustomer"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Analysis"
+        ]
+      }
+    },
+    "/v1/orders": {
+      "get": {
+        "operationId": "Analysis_GetOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/analysisOrder"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Analysis"
+        ]
+      }
+    },
+    "/v1/restaurants": {
+      "get": {
+        "operationId": "Analysis_GetRestaurant",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/analysisRestaurant"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Analysis"
+        ]
+      }
+    },
+    "/v1/restaurants/top": {
+      "get": {
+        "operationId": "Analysis_TopRestaurants",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/analysisRestaurantList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "length",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Analysis"
+        ]
+      }
+    },
+    "/v1/restaurants/worst": {
+      "get": {
+        "operationId": "Analysis_WorstRestaurants",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/analysisRestaurantList"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "length",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Analysis"
+        ]
+      }
+    },
+    "/v1/state-cuisines/top": {
+      "get": {
+        "operationId": "Analysis_TopStateCuisines",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/analysisStateCuisines"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "length",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Analysis"
+        ]
+      }
+    },
+    "/v1/state-cuisines/worst": {
+      "get": {
+        "operationId": "Analysis_WorstStateCuisines",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/analysisStateCuisines"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response",
+            "schema": {
+              "$ref": "#/definitions/runtimeError"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "length",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Analysis"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "CuisineCustomersCustomerList": {
+      "type": "object",
+      "properties": {
+        "Customer": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/analysisCustomer"
+          }
+        }
+      }
+    },
+    "StateCuisinesCuisineList": {
+      "type": "object",
+      "properties": {
+        "Cuisine": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "analysisCuisineCustomers": {
+      "type": "object",
+      "properties": {
+        "Cuisines": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/CuisineCustomersCustomerList"
+          }
+        }
+      }
+    },
+    "analysisCustomer": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "State": {
+          "type": "string"
+        }
+      }
+    },
+    "analysisOrder": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Discount": {
+          "type": "number",
+          "format": "float"
+        },
+        "Amount": {
+          "type": "number",
+          "format": "float"
+        },
+        "PaymentMode": {
+          "type": "string"
+        },
+        "Rating": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Duration": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Cuisine": {
+          "type": "string"
+        },
+        "Time": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "analysisRestaurant": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "State": {
+          "type": "string"
+        }
+      }
+    },
+    "analysisRestaurantList": {
+      "type": "object",
+      "properties": {
+        "Rest": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/analysisRestaurant"
+          }
+        }
+      }
+    },
+    "analysisStateCuisines": {
+      "type": "object",
+      "properties": {
+        "States": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/StateCuisinesCuisineList"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "runtimeError": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
