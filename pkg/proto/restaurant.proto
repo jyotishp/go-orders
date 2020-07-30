@@ -2,7 +2,7 @@ syntax = "proto3";
 package analysis;
 option go_package="pkg/proto";
 import "google/api/annotations.proto";
-import "customer.proto";
+import "utils.proto";
 
 
 // Item

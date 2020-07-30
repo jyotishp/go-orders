@@ -2,6 +2,7 @@ syntax = "proto3";
 package analysis;
 option go_package="pkg/proto";
 import "google/api/annotations.proto";
+import "utils.proto";
 
 // Order
 message Order {
@@ -18,16 +19,6 @@ message Order {
 // Order Request
 message OrderReq {
   Order order = 1;
-}
-
-// Request parameters
-message GetReq {
-  int32 id = 1;
-}
-
-// Response for POST
-message PostRes {
-  string response = 1;
 }
 
 service Orders {

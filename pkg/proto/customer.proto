@@ -2,11 +2,7 @@ syntax = "proto3";
 package analysis;
 option go_package="pkg/proto";
 import "google/api/annotations.proto";
-
-// Request parameters
-message GetReq {
-  int32 id = 1;
-}
+import "utils.proto";
 
 // Customer
 message Customer {
@@ -23,11 +19,6 @@ message CustomerList {
 // Customer Request
 message CustomerReq {
   Customer customer = 1;
-}
-
-// Response for POST
-message PostRes {
-  string response = 1;
 }
 
 service Customers {
