@@ -14,41 +14,59 @@ message Order {
   int32 duration = 6;
   string cuisine = 7;
   int32 time = 8;
+  bool verified = 9;
 }
 
-// Order Request
-message OrderReq {
-  Order order = 1;
+// Order ID
+message OrderId {
+  int32 order_id = 1;
+}
+
+// Create Order
+message CreateOrder {
+  float discount = 1;
+  float amount = 2;
+  string payment_method = 3;
+  int32 rating = 4;
+  int32 duration = 5;
+  string cuisine = 6;
+  int32 time = 7;
+}
+
+// Update Order
+message UpdateOrder {
+  int32 order_id = 1;
+  CreateOrder order = 2;
 }
 
 service Orders {
   // Gets an order given its ID
-  rpc GetOrder(GetReq) returns (Order) {
+  rpc GetOrder(OrderId) returns (Order) {
     option (google.api.http) = {
-      get: "/v1/orders/{id}"
+      get: "/v1/orders/{order_id}"
     };
   }
 
-  // Gets order(JSON) and adds it to db
-  rpc PostOrder(OrderReq) returns (PostRes) {
+  // Create a new order
+  rpc PostOrder(CreateOrder) returns (Order) {
     option (google.api.http) = {
       post: "/v1/orders",
+      body: "*"
+    };
+  }
+
+  // Update an order by ID
+  rpc PutOrder(UpdateOrder) returns (Order) {
+    option (google.api.http) = {
+      put: "/v1/orders/{order_id}"
       body: "order"
     };
   }
 
-  // Gets order(JSON) and updates order in db
-  rpc PutOrder(OrderReq) returns (PostRes) {
+  // Delete an order by ID
+  rpc DeleteOrder(OrderId) returns (Empty) {
     option (google.api.http) = {
-      put: "/v1/orders/{order.id}"
-      body: "order"
-    };
-  }
-
-  // Deletes Order of given Order ID
-  rpc DeleteOrder(OrderReq) returns (PostRes) {
-    option (google.api.http) = {
-      delete: "/v1/orders/{order.id}"
+      delete: "/v1/orders/{order_id}"
     };
   }
 }

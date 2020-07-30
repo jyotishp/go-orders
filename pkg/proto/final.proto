@@ -1,9 +1,0 @@
-syntax = "proto3";
-package protos;
-option go_package="pkg/proto";
-import "analysis.proto";
-import "auth.proto";
-import "orders.proto";
-import "utils.proto";
-import "customer.proto";
-import "restaurant.proto";

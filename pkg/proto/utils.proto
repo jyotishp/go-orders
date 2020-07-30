@@ -2,12 +2,10 @@ syntax = "proto3";
 package protos;
 option go_package="pkg/proto";
 
-// Request parameters
-message GetReq {
-  int32 id = 1;
-}
+// Empty
+message Empty {}
 
-// Response for POST
-message PostRes {
-  string response = 1;
+// Quanity
+message Quantity {
+  int32 size = 1;
 }

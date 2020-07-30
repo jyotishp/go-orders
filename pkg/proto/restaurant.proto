@@ -5,22 +5,57 @@ import "google/api/annotations.proto";
 import "utils.proto";
 
 
-// Item
+// Food Item
 message Item {
   int32 id = 1;
   float amount = 2;
   float discount = 3;
   string cuisine = 4;
+  string name = 5;
 }
 
-// Slice of Items
+// Items List
 message ItemList {
   repeated Item items = 1;
 }
 
-// Restaurant Name
-message NameReq {
+// Items Filter
+message ItemsFilter {
+  int32 restaurant_id = 1;
+  int32 min = 2;
+  int32 max = 3;
+}
+
+// Item ID
+message ItemId {
+  int32 item_id = 1;
+  int32 restaurant_id = 2;
+}
+
+// Create Item Parameters
+message CreateItemParams {
   string name = 1;
+  float amount = 2;
+  float discount = 3;
+  string cuisine = 4;
+}
+
+// Create Item
+message CreateItem {
+  int32 restaurant_id = 1;
+  CreateItemParams item = 2;
+}
+
+// Update Item
+message UpdateItem {
+  int32 item_id = 1;
+  int32 restaurant_id = 2;
+  CreateItemParams item = 3;
+}
+
+// Restaurant Name
+message RestaurantName {
+  string restaurant_name = 1;
 }
 
 // Restaurant
@@ -35,93 +70,95 @@ message RestaurantList {
   repeated Restaurant restaurants = 1;
 }
 
-// Restaurant Request
-message RestReq {
-  Restaurant restaurant = 1;
+// Restaurant ID
+message RestaurantId {
+  int32 restaurant_id = 1;
 }
 
-// POST Item Request
-message PostItemReq {
-  int32 id = 1;
-  Item item = 2;
+// Create Restaurant
+message CreateRestaurant {
+  string name = 1;
+  string state = 2;
 }
 
-// Item Request
-message ItemReq {
-  int32 id = 1;
-  int32 item_id = 2;
-  int32 min = 3;
-  int32 max = 4;
+// Update Restaurant
+message UpdateRestaurant {
+  int32 restaurant_id = 1;
+  Restaurant restaurant = 2;
 }
 
 service Restaurants {
   // Get a restaurant given its ID
-  rpc GetRestaurant(GetReq) returns (Restaurant) {
+  rpc GetRestaurant(RestaurantId) returns (Restaurant) {
     option (google.api.http) = {
-      get: "/v1/restaurants/{id}"
+      get: "/v1/restaurants/{restaurant_id}"
     };
   }
 
-  // Get all Restaurants of a given name
-  rpc GetRestaurantName(NameReq) returns (RestaurantList) {
+  // Get all restaurants of a given name
+  rpc GetRestaurantName(RestaurantName) returns (RestaurantList) {
     option (google.api.http) = {
-      get: "/v1/restaurants/{name}"
+      get: "/v1/restaurantsByName/{restaurant_name}"
     };
   }
 
-  // Gets a Restaurant and adds it to the db
-  rpc PostRestaurant(RestReq) returns (PostRes) {
+  // Create a new restaurant
+  rpc PostRestaurant(CreateRestaurant) returns (Restaurant) {
     option (google.api.http) = {
       post: "/v1/restaurants",
+      body: "*"
+    };
+  }
+
+  // Update a restaurant given its ID
+  rpc PutRestaurant(UpdateRestaurant) returns (Restaurant) {
+    option (google.api.http) = {
+      put: "/v1/restaurants/{restaurant_id}",
       body: "restaurant"
     };
   }
 
-  // Gets a Restaurant ID and returns all of it's items
-  rpc GetRestaurantAllItems(GetReq) returns (ItemList) {
+  // Delete a restaurant given its ID
+  rpc DeleteRestaurant(RestaurantId) returns (Empty) {
     option (google.api.http) = {
-      get: "/v1/restaurant/{id}/items"
+      delete: "/v1/restaurants/{restaurant_id}"
     };
   }
 
-  // Gets a min and max amount range and returns the list of items of given Restaurant ID that belong to this range
-  rpc GetRestaurantRangeItems(ItemReq) returns (ItemList) {
+  // List items of available in a restaurant
+  rpc ListItems(ItemsFilter) returns (ItemList) {
     option (google.api.http) = {
-      get: "/v1/restaurant/{id}/items/{min}"
+      get: "/v1/restaurants/{restaurant_id}/items"
     };
   }
 
-  // Gets Restaurant ID and Item ID and returns respective item
-  rpc GetRestaurantItem(ItemReq) returns (Item) {
+  // Get a item of a restaurant
+  rpc GetItem(ItemId) returns (Item) {
     option (google.api.http) = {
-      get: "/v1/restaurant/{id}/items/{item_id}"
+      get: "/v1/restaurants/{restaurant_id}/items/{item_id}"
     };
   }
 
-  // Gets an Item(JSON) and adds it to Restaurant of given ID in the db
-  rpc PostRestaurantItems(PostItemReq) returns (PostRes) {
+  // Add an item to a restaurant
+  rpc PostItem(CreateItem) returns (Item) {
     option (google.api.http) = {
-      post: "/v1/restaurant/{id}/items",
+      post: "/v1/restaurants/{restaurant_id}/items",
       body: "item"
     };
   }
 
-  // Gets an Item(JSON) and updates it to Restaurant of given ID in the db
-  rpc PutRestaurantItems(PostItemReq) returns (PostRes) {
+  // Update an item of a restaurant
+  rpc PutItem(UpdateItem) returns (Item) {
     option (google.api.http) = {
-      put: "/v1/restaurant/{id}/items/{item.id}",
+      put: "/v1/restaurants/{restaurant_id}/items/{item_id}",
       body: "item"
-      additional_bindings {
-        put: "/v1/restaurant/{id}/items"
-        body: "item"
-      }
     };
   }
 
-  // Deletes Item of given Item ID and Restaurant ID from db
-  rpc DeleteRestaurantItems(PostItemReq) returns (PostRes) {
+  // Delete an item from the restaurant
+  rpc DeleteItem(ItemId) returns (Empty) {
     option (google.api.http) = {
-      delete: "/v1/restaurant/{id}/items/{item.id}"
+      delete: "/v1/restaurants/{restaurant_id}/items/{item_id}"
     };
   }
 }

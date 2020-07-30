@@ -1,3 +1,7 @@
 vendor/*
 outputs/*
 pkg/proto/*.go
+swagger-ui/*swagger.json
+.idea/*
+sample.csv
+build/*

@@ -11,36 +11,63 @@ message Customer {
   string state = 3;
 }
 
+// Get Customer Request
+message CustomerId {
+  int32 customer_id = 1;
+}
+
 // List of customers
 message CustomerList {
   repeated Customer customer = 1;
 }
 
-// Customer Request
-message CustomerReq {
-  Customer customer = 1;
+// Create customer
+message CreateCustomer {
+  string name = 1;
+  string state = 2;
+}
+
+// Update cusomer
+message UpdateCustomer {
+  string customer_id = 1;
+  CreateCustomer customer = 2;
 }
 
 service Customers {
-  // Returns all Customers
-  rpc GetAllCustomers(GetReq) returns (CustomerList) {
+  // List all customers
+  rpc ListCustomers(Empty) returns (CustomerList) {
     option (google.api.http) = {
       get: "/v1/customers"
     };
   }
 
-  // Returns Customer of specific ID
-  rpc GetCustomer(CustomerReq) returns (Customer) {
+  // Get a customer by ID
+  rpc GetCustomer(CustomerId) returns (Customer) {
     option (google.api.http) = {
-      get: "/v1/customers/{customer.id}"
+      get: "/v1/customers/{customer_id}"
     };
   }
 
-  // Creates Customer of given ID in the db
-  rpc PutCustomer(CustomerReq) returns (PostRes) {
+  // Create a new customer
+  rpc PostCustomer(CreateCustomer) returns (Customer) {
     option (google.api.http) = {
-      post: "/v1/customers/{customer.id}",
+      post: "/v1/customers",
+      body: "*"
+    };
+  }
+
+  // Update exiting customer by ID
+  rpc PutCustomer(UpdateCustomer) returns (Customer) {
+    option (google.api.http) = {
+      put: "/v1/customers/{customer_id}",
       body: "customer"
+    };
+  }
+
+  // Delete customer by ID
+  rpc DeleteCustomer(CustomerId) returns (Empty) {
+    option (google.api.http) = {
+      delete: "/v1/customers/{customer_id}"
     };
   }
 }

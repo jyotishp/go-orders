@@ -29,37 +29,37 @@ message Cuisine {
 service Analysis {
 
   // Get the top performing restaurants by order count
-  rpc TopRestaurants(GetReq) returns (RestaurantList) {
+  rpc TopRestaurants(Quantity) returns (RestaurantList) {
     option (google.api.http) = {
-      get: "/v1/restaurants/top/{id}"
+      get: "/v1/analysis/restaurants/top/{size}"
     };
   }
 
   // Get the worst performing restaurants by order count
-  rpc WorstRestaurants(GetReq) returns (RestaurantList) {
+  rpc WorstRestaurants(Quantity) returns (RestaurantList) {
     option (google.api.http) = {
-      get: "/v1/restaurants/worst/{id}"
+      get: "/v1/analysis/restaurants/worst/{size}"
     };
   }
 
   // Get the most ordered cuisines for states
-  rpc TopStateCuisines(GetReq) returns (StateCuisines) {
+  rpc TopStateCuisines(Quantity) returns (StateCuisines) {
     option (google.api.http) = {
-      get: "/v1/state-cuisines/top/{id}"
+      get: "/v1/analysis/state/cuisines/top/{size}"
     };
   }
 
   // Get the least ordered cuisines for states
-  rpc WorstStateCuisines(GetReq) returns (StateCuisines) {
+  rpc WorstStateCuisines(Quantity) returns (StateCuisines) {
     option (google.api.http) = {
-      get: "/v1/state-cuisines/worst/{id}"
+      get: "/v1/analysis/state/cuisines/worst/{size}"
     };
   }
 
   // Get the customer base for cuisines
   rpc CuisineCustomerMap(Cuisine) returns (CuisineCustomers) {
     option (google.api.http) = {
-      get: "/v1/cuisines-demographics/{name}"
+      get: "/v1/analysis/cuisines-demographics/{name}"
     };
   }
 }

@@ -53,5 +53,5 @@ func StartHTTP() {
 }
 
 func serveSwagger(w http.ResponseWriter, r *http.Request) {
-    http.ServeFile(w, r, "swagger-ui/analysis.swagger.json")
+    http.ServeFile(w, r, "swagger-ui/app.swagger.json")
 }
