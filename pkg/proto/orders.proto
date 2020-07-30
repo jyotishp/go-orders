@@ -1,0 +1,63 @@
+syntax = "proto3";
+package analysis;
+option go_package="pkg/proto";
+import "google/api/annotations.proto";
+
+// Order
+message Order {
+  int32 id = 1;
+  float discount = 2;
+  float amount = 3;
+  string payment_method = 4;
+  int32 rating = 5;
+  int32 duration = 6;
+  string cuisine = 7;
+  int32 time = 8;
+}
+
+// Order Request
+message OrderReq {
+  Order order = 1;
+}
+
+// Request parameters
+message GetReq {
+  int32 id = 1;
+}
+
+// Response for POST
+message PostRes {
+  string response = 1;
+}
+
+service Orders {
+  // Gets an order given its ID
+  rpc GetOrder(GetReq) returns (Order) {
+    option (google.api.http) = {
+      get: "/v1/orders/{id}"
+    };
+  }
+
+  // Gets order(JSON) and adds it to db
+  rpc PostOrder(OrderReq) returns (PostRes) {
+    option (google.api.http) = {
+      post: "/v1/orders",
+      body: "order"
+    };
+  }
+
+  // Gets order(JSON) and updates order in db
+  rpc PutOrder(OrderReq) returns (PostRes) {
+    option (google.api.http) = {
+      put: "/v1/orders/{order.id}"
+      body: "order"
+    };
+  }
+
+  // Deletes Order of given Order ID
+  rpc DeleteOrder(OrderReq) returns (PostRes) {
+    option (google.api.http) = {
+      delete: "/v1/orders/{order.id}"
+    };
+  }
+}

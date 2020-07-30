@@ -1,0 +1,55 @@
+syntax = "proto3";
+package analysis;
+option go_package="pkg/proto";
+import "google/api/annotations.proto";
+
+// Request parameters
+message GetReq {
+  int32 id = 1;
+}
+
+// Customer
+message Customer {
+  int32 id = 1;
+  string name = 2;
+  string state = 3;
+}
+
+// List of customers
+message CustomerList {
+  repeated Customer customer = 1;
+}
+
+// Customer Request
+message CustomerReq {
+  Customer customer = 1;
+}
+
+// Response for POST
+message PostRes {
+  string response = 1;
+}
+
+service Customers {
+  // Returns all Customers
+  rpc GetAllCustomers(GetReq) returns (CustomerList) {
+    option (google.api.http) = {
+      get: "/v1/customers"
+    };
+  }
+
+  // Returns Customer of specific ID
+  rpc GetCustomer(CustomerReq) returns (Customer) {
+    option (google.api.http) = {
+      get: "/v1/customers/{customer.id}"
+    };
+  }
+
+  // Updates Customer of given ID in the db
+  rpc PutCustomer(CustomerReq) returns (PostRes) {
+    option (google.api.http) = {
+      put: "/v1/customers/{customer.id}",
+      body: "customer"
+    };
+  }
+}

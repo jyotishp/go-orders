@@ -1,0 +1,13 @@
+syntax = "proto3";
+package analysis;
+option go_package="pkg/proto";
+
+// Request parameters
+message GetReq {
+  int32 id = 1;
+}
+
+// Response for POST
+message PostRes {
+  string response = 1;
+}

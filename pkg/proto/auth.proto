@@ -1,0 +1,30 @@
+syntax = "proto3";
+package analysis;
+option go_package="pkg/proto";
+import "google/api/annotations.proto";
+
+// Login Request
+message LoginReq {
+  LoginCred cred = 1;
+}
+
+// Login Credentials
+message LoginCred {
+  string user = 1;
+  string pass = 2;
+}
+
+// Token
+message LoginRes {
+  string token = 1;
+}
+
+service Authentication {
+  // Gets user credentials and returns jwt token
+  rpc Login(LoginReq) returns (LoginRes) {
+    option (google.api.http) = {
+      post: "/v1/login",
+      body: "cred"
+    };
+  }
+}

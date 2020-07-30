@@ -5,7 +5,7 @@ proto:
 	--go_out=plugins=grpc:. \
 	--grpc-gateway_out=logtostderr=true:. \
 	--swagger_out=logtostderr=true:swagger-ui \
-	--proto_path pkg/proto analysis.proto
+	--proto_path pkg/proto analysis.proto restaurant.proto customer.proto orders.proto auth.proto
 
 run:
 	go run cmd/server/main.go
