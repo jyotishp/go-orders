@@ -1,5 +1,5 @@
 syntax = "proto3";
-package analysis;
+package protos;
 option go_package="pkg/proto";
 import "google/api/annotations.proto";
 import "customer.proto";
@@ -19,6 +19,11 @@ message StateCuisines {
 // Customers per cuisine
 message CuisineCustomers {
   map<string, CustomerList> cuisines = 1;
+}
+
+// Cuisine
+message Cuisine {
+  string name = 1;
 }
 
 service Analysis {
@@ -52,9 +57,9 @@ service Analysis {
   }
 
   // Get the customer base for cuisines
-  rpc CuisineCustomerMap(GetReq) returns (CuisineCustomers) {
+  rpc CuisineCustomerMap(Cuisine) returns (CuisineCustomers) {
     option (google.api.http) = {
-      get: "/v1/cuisines-demographics/{id}"
+      get: "/v1/cuisines-demographics/{name}"
     };
   }
 }

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package analysis;
+package protos;
 option go_package="pkg/proto";
 import "google/api/annotations.proto";
 import "utils.proto";
@@ -36,10 +36,10 @@ service Customers {
     };
   }
 
-  // Updates Customer of given ID in the db
+  // Creates Customer of given ID in the db
   rpc PutCustomer(CustomerReq) returns (PostRes) {
     option (google.api.http) = {
-      put: "/v1/customers/{customer.id}",
+      post: "/v1/customers/{customer.id}",
       body: "customer"
     };
   }

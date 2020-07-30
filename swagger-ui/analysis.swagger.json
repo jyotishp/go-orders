@@ -11,14 +11,15 @@
     "application/json"
   ],
   "paths": {
-    "/v1/cuisines-demographics": {
+    "/v1/cuisines-demographics/{id}": {
       "get": {
-        "operationId": "Analysis_CusineCustomerMap",
+        "summary": "Get the customer base for cuisines",
+        "operationId": "Analysis_CuisineCustomerMap",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/analysisCuisineCustomers"
+              "$ref": "#/definitions/protosCuisineCustomers"
             }
           },
           "default": {
@@ -30,9 +31,9 @@
         },
         "parameters": [
           {
-            "name": "length",
-            "in": "query",
-            "required": false,
+            "name": "id",
+            "in": "path",
+            "required": true,
             "type": "integer",
             "format": "int32"
           }
@@ -42,107 +43,15 @@
         ]
       }
     },
-    "/v1/customers": {
+    "/v1/restaurants/top/{id}": {
       "get": {
-        "operationId": "Analysis_GetCustomer",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/analysisCustomer"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "Id",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "tags": [
-          "Analysis"
-        ]
-      }
-    },
-    "/v1/orders": {
-      "get": {
-        "operationId": "Analysis_GetOrder",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/analysisOrder"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "Id",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "tags": [
-          "Analysis"
-        ]
-      }
-    },
-    "/v1/restaurants": {
-      "get": {
-        "operationId": "Analysis_GetRestaurant",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/analysisRestaurant"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response",
-            "schema": {
-              "$ref": "#/definitions/runtimeError"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "Id",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          }
-        ],
-        "tags": [
-          "Analysis"
-        ]
-      }
-    },
-    "/v1/restaurants/top": {
-      "get": {
+        "summary": "Get the top performing restaurants by order count",
         "operationId": "Analysis_TopRestaurants",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/analysisRestaurantList"
+              "$ref": "#/definitions/protosRestaurantList"
             }
           },
           "default": {
@@ -154,9 +63,9 @@
         },
         "parameters": [
           {
-            "name": "length",
-            "in": "query",
-            "required": false,
+            "name": "id",
+            "in": "path",
+            "required": true,
             "type": "integer",
             "format": "int32"
           }
@@ -166,14 +75,15 @@
         ]
       }
     },
-    "/v1/restaurants/worst": {
+    "/v1/restaurants/worst/{id}": {
       "get": {
+        "summary": "Get the worst performing restaurants by order count",
         "operationId": "Analysis_WorstRestaurants",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/analysisRestaurantList"
+              "$ref": "#/definitions/protosRestaurantList"
             }
           },
           "default": {
@@ -185,9 +95,9 @@
         },
         "parameters": [
           {
-            "name": "length",
-            "in": "query",
-            "required": false,
+            "name": "id",
+            "in": "path",
+            "required": true,
             "type": "integer",
             "format": "int32"
           }
@@ -197,14 +107,15 @@
         ]
       }
     },
-    "/v1/state-cuisines/top": {
+    "/v1/state-cuisines/top/{id}": {
       "get": {
+        "summary": "Get the most ordered cuisines for states",
         "operationId": "Analysis_TopStateCuisines",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/analysisStateCuisines"
+              "$ref": "#/definitions/protosStateCuisines"
             }
           },
           "default": {
@@ -216,9 +127,9 @@
         },
         "parameters": [
           {
-            "name": "length",
-            "in": "query",
-            "required": false,
+            "name": "id",
+            "in": "path",
+            "required": true,
             "type": "integer",
             "format": "int32"
           }
@@ -228,14 +139,15 @@
         ]
       }
     },
-    "/v1/state-cuisines/worst": {
+    "/v1/state-cuisines/worst/{id}": {
       "get": {
+        "summary": "Get the least ordered cuisines for states",
         "operationId": "Analysis_WorstStateCuisines",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/analysisStateCuisines"
+              "$ref": "#/definitions/protosStateCuisines"
             }
           },
           "default": {
@@ -247,9 +159,9 @@
         },
         "parameters": [
           {
-            "name": "length",
-            "in": "query",
-            "required": false,
+            "name": "id",
+            "in": "path",
+            "required": true,
             "type": "integer",
             "format": "int32"
           }
@@ -261,125 +173,17 @@
     }
   },
   "definitions": {
-    "CuisineCustomersCustomerList": {
-      "type": "object",
-      "properties": {
-        "Customer": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/analysisCustomer"
-          }
-        }
-      }
-    },
     "StateCuisinesCuisineList": {
       "type": "object",
       "properties": {
-        "Cuisine": {
+        "cuisine": {
           "type": "array",
           "items": {
             "type": "string"
           }
         }
-      }
-    },
-    "analysisCuisineCustomers": {
-      "type": "object",
-      "properties": {
-        "Cuisines": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/CuisineCustomersCustomerList"
-          }
-        }
-      }
-    },
-    "analysisCustomer": {
-      "type": "object",
-      "properties": {
-        "Id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Name": {
-          "type": "string"
-        },
-        "State": {
-          "type": "string"
-        }
-      }
-    },
-    "analysisOrder": {
-      "type": "object",
-      "properties": {
-        "Id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Discount": {
-          "type": "number",
-          "format": "float"
-        },
-        "Amount": {
-          "type": "number",
-          "format": "float"
-        },
-        "PaymentMode": {
-          "type": "string"
-        },
-        "Rating": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Duration": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Cuisine": {
-          "type": "string"
-        },
-        "Time": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "analysisRestaurant": {
-      "type": "object",
-      "properties": {
-        "Id": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "Name": {
-          "type": "string"
-        },
-        "State": {
-          "type": "string"
-        }
-      }
-    },
-    "analysisRestaurantList": {
-      "type": "object",
-      "properties": {
-        "Rest": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/analysisRestaurant"
-          }
-        }
-      }
-    },
-    "analysisStateCuisines": {
-      "type": "object",
-      "properties": {
-        "States": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/StateCuisinesCuisineList"
-          }
-        }
-      }
+      },
+      "title": "List of cuisines"
     },
     "protobufAny": {
       "type": "object",
@@ -392,6 +196,86 @@
           "format": "byte"
         }
       }
+    },
+    "protosCuisineCustomers": {
+      "type": "object",
+      "properties": {
+        "cuisines": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/protosCustomerList"
+          }
+        }
+      },
+      "title": "Customers per cuisine"
+    },
+    "protosCustomer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "title": "Customer"
+    },
+    "protosCustomerList": {
+      "type": "object",
+      "properties": {
+        "customer": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protosCustomer"
+          }
+        }
+      },
+      "title": "List of customers"
+    },
+    "protosRestaurant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      },
+      "title": "Restaurant"
+    },
+    "protosRestaurantList": {
+      "type": "object",
+      "properties": {
+        "restaurants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protosRestaurant"
+          }
+        }
+      },
+      "title": "List of Restaurants"
+    },
+    "protosStateCuisines": {
+      "type": "object",
+      "properties": {
+        "states": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/StateCuisinesCuisineList"
+          }
+        }
+      },
+      "title": "Cuisines per state"
     },
     "runtimeError": {
       "type": "object",

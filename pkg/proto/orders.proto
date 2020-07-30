@@ -1,5 +1,5 @@
 syntax = "proto3";
-package analysis;
+package protos;
 option go_package="pkg/proto";
 import "google/api/annotations.proto";
 import "utils.proto";

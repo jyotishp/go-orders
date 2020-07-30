@@ -1,5 +1,5 @@
 syntax = "proto3";
-package analysis;
+package protos;
 option go_package="pkg/proto";
 import "google/api/annotations.proto";
 import "utils.proto";
@@ -122,20 +122,6 @@ service Restaurants {
   rpc DeleteRestaurantItems(PostItemReq) returns (PostRes) {
     option (google.api.http) = {
       delete: "/v1/restaurant/{id}/items/{item.id}"
-    };
-  }
-
-  // Get the top performing restaurants by order count
-  rpc TopRestaurants(GetReq) returns (RestaurantList) {
-    option (google.api.http) = {
-      get: "/v1/restaurants/top/{id}"
-    };
-  }
-
-  // Get the worst performing restaurants by order count
-  rpc WorstRestaurants(GetReq) returns (RestaurantList) {
-    option (google.api.http) = {
-      get: "/v1/restaurants/worst/{id}"
     };
   }
 }
