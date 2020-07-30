@@ -22,20 +22,20 @@ make process-data
 make run
 ```
 
-### API's to be supported
-## Authorization
+## API's to be supported
+### Authorization
 1. `POST /login`
-## Orders
+### Orders
 1. `GET /orders/{id}`
 2. `POST /orders`
 3. `PUT /orders/{id}`
 4. `DELETE /orders/{id}`
-## Customers
+### Customers
 1. `GET /customers`
 2. `GET /customers/{id}`
 3. `POST /customers/{id}`
 4. `PUT /customers/{id}`
-## Restaurants
+### Restaurants
 1. `GET /restaurants/{id}`
 2. `GET /restaurants/{name}`
 3. `POST /restaurants`
@@ -45,7 +45,7 @@ make run
 7. `POST /restaurant/{id}/items`
 8. `PUT /restaurant/{id}/items/{item_id}`
 9. `DELETE /restaurant/{id}/items/{item_id}`
-## Problem Statement
+### Problem Statement
 1. `GET /restaurants/top/{num}`
 2. `GET /restaurants/worst/{num}`
 3. `GET /state-cuisines/top/{num}`
