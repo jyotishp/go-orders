@@ -11,49 +11,26 @@ import (
 type CustomerServer struct {
 }
 
-const tableName = "Customers"
+const customerTableName = "Customers"
 
 func (s *CustomerServer) GetCustomer(ctx stdctx.Context, id *pb.CustomerId) (*pb.Customer, error) {
-	customer, err := db.GetCustomer(tableName, id.CustomerId)
+	customer, err := db.GetCustomer(customerTableName, id.CustomerId)
 	if err != nil {
 		return &pb.Customer{}, err
 	}
-	return &pb.Customer{
-		Name: customer.Name,
-		Id: customer.Id,
-		Address: &pb.Address{
-			Line1: customer.Address.Line1,
-			Line2: customer.Address.Line2,
-			City: customer.Address.City,
-			State: customer.Address.State,
-		},
-	}, nil
+	return createCustomer(customer), nil
 }
 
 func (s *CustomerServer) PostCustomer(ctx stdctx.Context, customer *pb.CreateCustomer) (*pb.Customer, error) {
-	createCustomer := models.Customer{
+	ipCustomer := models.Customer{
 		Name: customer.Name,
-		Address: models.Address{
-			Line1: customer.Address.Line1,
-			Line2: customer.Address.Line2,
-			City: customer.Address.City,
-			State: customer.Address.State,
-		},
+		Address: models.CreateAddressCreateCustomer(customer),
 	}
-	newCustomer, err := db.CreateCustomer(tableName, createCustomer)
+	newCustomer, err := db.CreateCustomer(customerTableName, ipCustomer)
 	if err != nil {
 		return &pb.Customer{}, nil
 	}
-	return &pb.Customer{
-		Id: newCustomer.Id,
-		Name: newCustomer.Name,
-		Address: &pb.Address{
-			Line1: newCustomer.Address.Line1,
-			Line2: newCustomer.Address.Line2,
-			City: newCustomer.Address.City,
-			State: newCustomer.Address.State,
-		},
-	}, nil
+	return createCustomer(newCustomer), nil
 }
 
 func (s *CustomerServer) PutCustomer(ctx stdctx.Context, customer *pb.UpdateCustomer) (*pb.Customer, error) {

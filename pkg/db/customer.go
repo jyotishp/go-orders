@@ -12,19 +12,16 @@ func GetCustomer(tableName string, id int32) (models.Customer, error) {
 	type Input struct {
 		Id int32
 	}
-	item := Input{
-		Id: id,
-	}
 
-	key, err := dynamodbattribute.MarshalMap(item)
+	key, err := dynamodbattribute.MarshalMap(Input{Id: id})
 	if err != nil {
 		printError(err)
 		return models.Customer{}, err
 	}
 
 	ip := &dynamodb.GetItemInput{
-		Key: key,
 		TableName: aws.String(tableName),
+		Key: key,
 	}
 
 	svc := createSession()
@@ -43,7 +40,7 @@ func GetCustomer(tableName string, id int32) (models.Customer, error) {
 		return models.Customer{}, err
 	}
 
-	return customer, err
+	return customer, nil
 }
 
 func CreateCustomer(tableName string, createCustomer models.Customer) (models.Customer, error) {

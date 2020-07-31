@@ -30,6 +30,7 @@ message Restaurant {
   int32 id = 1;
   string name = 2;
   Address address = 3;
+  ItemList items = 4;
 }
 
 // Address
@@ -53,6 +54,7 @@ message Order {
   bool verified = 9;
   Customer customer = 10;
   Restaurant restaurant = 11;
+  ItemList items = 12;
 }
 
 

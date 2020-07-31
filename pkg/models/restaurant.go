@@ -4,4 +4,5 @@ type Restaurant struct {
 	Id int32
 	Name string
 	Address Address
+	Items []Item
 }

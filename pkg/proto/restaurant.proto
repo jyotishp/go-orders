@@ -52,6 +52,7 @@ message RestaurantId {
 message CreateRestaurant {
   string name = 1;
   Address address = 2;
+  ItemList items = 3;
 }
 
 // Update Restaurant
