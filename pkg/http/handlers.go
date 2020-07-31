@@ -16,7 +16,8 @@ func StartGRPC() {
         log.Fatalf("Failed to listen: %v", err)
     }
     grpcServer := grpc.NewServer()
-    pb.RegisterAnalysisServer(grpcServer, &AnalysisServer{})
+    pb.RegisterCustomersServer(grpcServer, &CustomerServer{})
+    pb.RegisterUtilsServer(grpcServer, &UtilsServer{})
     log.Println("gRPC server ready...")
     grpcServer.Serve(lis)
 }
@@ -33,11 +34,17 @@ func StartHTTP() {
     defer conn.Close()
 
     rmux := runtime.NewServeMux()
-    client := pb.NewAnalysisClient(conn)
-    err = pb.RegisterAnalysisHandlerClient(ctx, rmux, client)
+    client := pb.NewCustomersClient(conn)
+    utilsClient := pb.NewUtilsClient(conn)
+    err = pb.RegisterCustomersHandlerClient(ctx, rmux, client)
     if err != nil {
        log.Fatal(err)
     }
+    err = pb.RegisterUtilsHandlerClient(ctx, rmux, utilsClient)
+    if err != nil {
+        log.Fatal(err)
+    }
+
     log.Println("Registered with gRPC...")
 
     mux := http.NewServeMux()

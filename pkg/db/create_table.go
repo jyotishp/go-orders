@@ -14,13 +14,13 @@ func createOrderTable(tableName string) {
 		TableName: aws.String(tableName),
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{
 			{
-				AttributeName: aws.String("OrderId"),
+				AttributeName: aws.String("Id"),
 				AttributeType: aws.String("N"),
 			},
 		},
 		KeySchema: []*dynamodb.KeySchemaElement{
 			{
-				AttributeName: aws.String("OrderId"),
+				AttributeName: aws.String("Id"),
 				KeyType: aws.String("HASH"),
 			},
 		},
@@ -32,7 +32,7 @@ func createOrderTable(tableName string) {
 
 	_, err := svc.CreateTable(ip)
 	if err != nil {
-		checkError(err)
+		printError(err)
 		return
 	}
 	fmt.Println("Successfully created ", tableName, " table.")
@@ -45,13 +45,13 @@ func createRestaurantTable(tableName string) {
 		TableName: aws.String(tableName),
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{
 			{
-				AttributeName: aws.String("RestaurantId"),
+				AttributeName: aws.String("Id"),
 				AttributeType: aws.String("N"),
 			},
 		},
 		KeySchema: []*dynamodb.KeySchemaElement{
 			{
-				AttributeName: aws.String("RestaurantId"),
+				AttributeName: aws.String("Id"),
 				KeyType: aws.String("HASH"),
 			},
 		},
@@ -63,7 +63,7 @@ func createRestaurantTable(tableName string) {
 
 	_, err := svc.CreateTable(ip)
 	if err != nil {
-		checkError(err)
+		printError(err)
 		return
 	}
 	fmt.Println("Successfully created ", tableName, " table.")
@@ -76,13 +76,13 @@ func createCustomerTable(tableName string) {
 		TableName: aws.String(tableName),
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{
 			{
-				AttributeName: aws.String("CustomerId"),
+				AttributeName: aws.String("Id"),
 				AttributeType: aws.String("N"),
 			},
 		},
 		KeySchema: []*dynamodb.KeySchemaElement{
 			{
-				AttributeName: aws.String("CustomerId"),
+				AttributeName: aws.String("Id"),
 				KeyType: aws.String("HASH"),
 			},
 		},
@@ -94,7 +94,7 @@ func createCustomerTable(tableName string) {
 
 	_, err := svc.CreateTable(ip)
 	if err != nil {
-		checkError(err)
+		printError(err)
 		return
 	}
 	fmt.Println("Successfully created ", tableName, " table.")

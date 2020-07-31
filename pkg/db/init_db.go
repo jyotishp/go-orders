@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-func checkError(err error) {
+func printError(err error) {
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
 			switch aerr.Code() {
@@ -25,6 +25,7 @@ func checkError(err error) {
 			// Message from an error.
 			fmt.Println(err.Error())
 		}
+		return
 	}
 }
 
@@ -47,7 +48,7 @@ func checkTable(tableName string) bool  {
 	for {
 		result, err := svc.ListTables(input)
 		if err != nil {
-			checkError(err)
+			printError(err)
 			return false
 		}
 

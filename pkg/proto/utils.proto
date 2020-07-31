@@ -1,6 +1,7 @@
 syntax = "proto3";
 package protos;
 option go_package="pkg/proto";
+import "google/api/annotations.proto";
 
 // Empty
 message Empty {}
@@ -60,4 +61,16 @@ message Customer {
   int32 id = 1;
   string name = 2;
   Address address = 3;
+}
+
+message Table {
+  string table_name = 1;
+}
+
+service Utils {
+  rpc CreateTable(Table) returns (Empty) {
+    option (google.api.http) = {
+      get: "/v1/create-table/{table_name}"
+    };
+  }
 }

@@ -1,7 +1,7 @@
 package models
 
 type Customer struct {
-	id int32
-	name string
-	address Address
+	Id int32
+	Name string
+	Address Address
 }

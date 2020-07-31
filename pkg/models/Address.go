@@ -1,5 +1,5 @@
 package models
 
 type Address struct {
-	line1, line2, city, state string
+	Line1, Line2, City, State string
 }
