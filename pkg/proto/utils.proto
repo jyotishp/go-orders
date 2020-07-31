@@ -5,7 +5,60 @@ option go_package="pkg/proto";
 // Empty
 message Empty {}
 
-// Quanity
+// Quantity
 message Quantity {
   int32 size = 1;
+}
+
+// Food Item
+message Item {
+  int32 id = 1;
+  string name = 2;
+  string cuisine = 3;
+  float discount = 4;
+  float amount = 5;
+}
+
+// Items List
+message ItemList {
+  repeated Item items = 1;
+}
+
+// Restaurant
+message Restaurant {
+  int32 id = 1;
+  string name = 2;
+  string state = 3;
+  Address address = 4;
+}
+
+// Address
+message Address {
+  string line1 = 1;
+  string line2 = 2;
+  string city = 3;
+  string state = 4;
+}
+
+// Order
+message Order {
+  int32 order_id = 1;
+  float discount = 2;
+  float amount = 3;
+  string payment_method = 4;
+  int32 rating = 5;
+  int32 duration = 6;
+  string cuisine = 7;
+  int32 time = 8;
+  bool verified = 9;
+  Customer customer = 10;
+  Restaurant restaurant = 11;
+}
+
+
+// Customer
+message Customer {
+  int32 id = 1;
+  string name = 2;
+  Address address = 3;
 }

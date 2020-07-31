@@ -4,21 +4,6 @@ option go_package="pkg/proto";
 import "google/api/annotations.proto";
 import "utils.proto";
 
-
-// Food Item
-message Item {
-  int32 id = 1;
-  float amount = 2;
-  float discount = 3;
-  string cuisine = 4;
-  string name = 5;
-}
-
-// Items List
-message ItemList {
-  repeated Item items = 1;
-}
-
 // Items Filter
 message ItemsFilter {
   int32 restaurant_id = 1;
@@ -58,18 +43,6 @@ message RestaurantName {
   string restaurant_name = 1;
 }
 
-// Restaurant
-message Restaurant {
-  int32 id = 1;
-  string name = 2;
-  string state = 3;
-}
-
-// List of Restaurants
-message RestaurantList {
-  repeated Restaurant restaurants = 1;
-}
-
 // Restaurant ID
 message RestaurantId {
   int32 restaurant_id = 1;
@@ -85,6 +58,11 @@ message CreateRestaurant {
 message UpdateRestaurant {
   int32 restaurant_id = 1;
   Restaurant restaurant = 2;
+}
+
+// List of Restaurants
+message RestaurantList {
+  repeated Restaurant restaurants = 1;
 }
 
 service Restaurants {

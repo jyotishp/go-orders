@@ -4,9 +4,19 @@ option go_package="pkg/proto";
 import "google/api/annotations.proto";
 import "utils.proto";
 
-// Order
-message Order {
-  int32 id = 1;
+// Order ID
+message OrderId {
+  int32 order_id = 1;
+}
+
+// Item ID
+message ItemId {
+  int32 item_id = 1;
+}
+
+// Create Order
+message CreateOrder {
+  int32 restaurant_id = 1;
   float discount = 2;
   float amount = 3;
   string payment_method = 4;
@@ -14,23 +24,7 @@ message Order {
   int32 duration = 6;
   string cuisine = 7;
   int32 time = 8;
-  bool verified = 9;
-}
-
-// Order ID
-message OrderId {
-  int32 order_id = 1;
-}
-
-// Create Order
-message CreateOrder {
-  float discount = 1;
-  float amount = 2;
-  string payment_method = 3;
-  int32 rating = 4;
-  int32 duration = 5;
-  string cuisine = 6;
-  int32 time = 7;
+  repeated ItemId items = 9;
 }
 
 // Update Order
