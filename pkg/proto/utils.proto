@@ -28,8 +28,7 @@ message ItemList {
 message Restaurant {
   int32 id = 1;
   string name = 2;
-  string state = 3;
-  Address address = 4;
+  Address address = 3;
 }
 
 // Address

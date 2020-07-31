@@ -51,13 +51,13 @@ message RestaurantId {
 // Create Restaurant
 message CreateRestaurant {
   string name = 1;
-  string state = 2;
+  Address address = 2;
 }
 
 // Update Restaurant
 message UpdateRestaurant {
   int32 restaurant_id = 1;
-  Restaurant restaurant = 2;
+  CreateRestaurant restaurant = 2;
 }
 
 // List of Restaurants

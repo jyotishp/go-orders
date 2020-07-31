@@ -4,13 +4,6 @@ option go_package="pkg/proto";
 import "google/api/annotations.proto";
 import "utils.proto";
 
-// Customer
-message Customer {
-  int32 id = 1;
-  string name = 2;
-  string state = 3;
-}
-
 // Get Customer Request
 message CustomerId {
   int32 customer_id = 1;
@@ -24,10 +17,10 @@ message CustomerList {
 // Create customer
 message CreateCustomer {
   string name = 1;
-  string state = 2;
+  Address address = 2;
 }
 
-// Update cusomer
+// Update customer
 message UpdateCustomer {
   string customer_id = 1;
   CreateCustomer customer = 2;

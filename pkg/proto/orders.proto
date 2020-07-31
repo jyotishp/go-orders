@@ -17,14 +17,15 @@ message ItemID {
 // Create Order
 message CreateOrder {
   int32 restaurant_id = 1;
-  float discount = 2;
-  float amount = 3;
-  string payment_method = 4;
-  int32 rating = 5;
-  int32 duration = 6;
-  string cuisine = 7;
-  int32 time = 8;
-  repeated ItemID items = 9;
+  int32 customer_id = 2;
+  float discount = 3;
+  float amount = 4;
+  string payment_method = 5;
+  int32 rating = 6;
+  int32 duration = 7;
+  string cuisine = 8;
+  int32 time = 9;
+  repeated ItemID items = 10;
 }
 
 // Update Order
