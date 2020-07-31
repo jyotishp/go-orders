@@ -2,6 +2,6 @@ package models
 
 type Item struct {
 	Id int32
-	Name, Cuisine string
+	ItemName, Cuisine string
 	Discount, Amount float32
 }

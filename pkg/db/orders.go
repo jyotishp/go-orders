@@ -71,3 +71,39 @@ func InsertOrder(tableName string, createOrder models.Order) (models.Order, erro
 
 	return createOrder, nil
 }
+
+func UpdateOrder(tableName string, updateOrder models.Order) (models.Order, error) {
+	type KeyInput struct {
+		Id int32
+	}
+
+	key, err := dynamodbattribute.MarshalMap(KeyInput{Id: updateOrder.Id})
+	if err != nil {
+		printError(err)
+		return models.Order{}, err
+	}
+
+	omap, err := dynamodbattribute.MarshalMap(orderMap(updateOrder))
+	if err != nil {
+		printError(err)
+		return models.Order{}, err
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName: aws.String(tableName),
+		Key: key,
+		ExpressionAttributeValues: omap,
+		UpdateExpression: aws.String("set Discount=:od, Amount=:oamt, PaymentMethod=:opm, " +
+			"Rating=:or, OrderDuration=:odtn, Cuisine=:oc, OrderTime=:otm, Verified=:ov, " +
+			"Customer=:octmr, Restaurant=:ortrnt, OrderItems=:oitms"),
+	}
+
+	svc := createSession()
+	_, err = svc.UpdateItem(input)
+	if err != nil {
+		printError(err)
+		return models.Order{}, err
+	}
+
+	return updateOrder, nil
+}

@@ -16,25 +16,36 @@ const customerTableName = "Customers"
 func (s *CustomerServer) GetCustomer(ctx stdctx.Context, id *pb.CustomerId) (*pb.Customer, error) {
 	customer, err := db.GetCustomer(customerTableName, id.CustomerId)
 	if err != nil {
-		return nil, err
+		return &pb.Customer{}, err
 	}
 	return customerToPb(customer), nil
 }
 
 func (s *CustomerServer) PostCustomer(ctx stdctx.Context, customer *pb.CreateCustomer) (*pb.Customer, error) {
 	ipCustomer := models.Customer{
-		Name: customer.Name,
+		CustomerName: customer.Name,
 		Address: pbToAddress(customer.Address),
 	}
 	newCustomer, err := db.InsertCustomer(customerTableName, ipCustomer)
 	if err != nil {
-		return nil, err
+		return &pb.Customer{}, err
 	}
 	return customerToPb(newCustomer), nil
 }
 
 func (s *CustomerServer) PutCustomer(ctx stdctx.Context, customer *pb.UpdateCustomer) (*pb.Customer, error) {
-	return &pb.Customer{}, nil
+	ipCustomer := models.Customer{
+		Id: customer.CustomerId,
+		CustomerName: customer.Customer.Name,
+		Address: pbToAddress(customer.Customer.Address),
+	}
+
+	newCustomer, err := db.UpdateCustomer(customerTableName, ipCustomer)
+	if err != nil {
+		return &pb.Customer{}, err
+	}
+	return customerToPb(newCustomer), nil
+
 }
 
 func (s *CustomerServer) DeleteCustomer(ctx stdctx.Context, id *pb.CustomerId) (*pb.Empty, error) {

@@ -15,7 +15,7 @@ const restaurantsTableName = "Restaurants"
 func (r RestaurantsServer) GetRestaurant(ctx stdctx.Context, id *pb.RestaurantId) (*pb.Restaurant, error) {
 	restaurant, err := db.GetRestaurant(restaurantsTableName, id.RestaurantId)
 	if err != nil {
-		return nil, err
+		return &pb.Restaurant{}, err
 	}
 	return restaurantToPb(restaurant), nil
 }
@@ -26,13 +26,13 @@ func (r RestaurantsServer) GetRestaurantName(ctx stdctx.Context, name *pb.Restau
 
 func (r RestaurantsServer) PostRestaurant(ctx stdctx.Context, restaurant *pb.CreateRestaurant) (*pb.Restaurant, error) {
 	ipRestaurant := models.Restaurant{
-		Name: restaurant.Name,
+		RestaurantName: restaurant.Name,
 		Address: pbToAddress(restaurant.Address),
 		Items: pbToItems(restaurant.Items),
 	}
 	newRestaurant, err := db.InsertRestaurant(restaurantsTableName, ipRestaurant)
 	if err != nil {
-		return nil, err
+		return &pb.Restaurant{}, err
 	}
 
 	return  restaurantToPb(newRestaurant), nil

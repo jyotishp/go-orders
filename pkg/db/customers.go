@@ -71,3 +71,38 @@ func InsertCustomer(tableName string, createCustomer models.Customer) (models.Cu
 
 	return createCustomer, nil
 }
+
+func UpdateCustomer(tableName string, updateCustomer models.Customer) (models.Customer, error) {
+
+	type KeyInput struct {
+		Id int32
+	}
+
+	key, err := dynamodbattribute.MarshalMap(KeyInput{Id: updateCustomer.Id})
+	if err != nil {
+		printError(err)
+		return models.Customer{}, err
+	}
+
+	cm, err := dynamodbattribute.MarshalMap(customerMap(updateCustomer))
+	if err != nil {
+		printError(err)
+		return models.Customer{}, err
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName: aws.String(tableName),
+		Key: key,
+		ExpressionAttributeValues: cm,
+		UpdateExpression: aws.String("set CName = :cn, Address = :cadr"),
+	}
+
+	svc := createSession()
+	_, err = svc.UpdateItem(input)
+	if err != nil {
+		printError(err)
+		return models.Customer{}, err
+	}
+
+	return updateCustomer, nil
+}

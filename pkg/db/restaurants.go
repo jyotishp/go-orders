@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/google/uuid"
 	"github.com/jyotishp/go-orders/pkg/models"
 )
 
@@ -40,4 +41,34 @@ func GetRestaurant(tableName string, id int32) (models.Restaurant, error) {
 	}
 
 	return restaurant, nil
+}
+
+func InsertRestaurant(tableName string, createRestaurant models.Restaurant) (models.Restaurant, error) {
+	uid, err := uuid.NewUUID()
+	if err != nil {
+		printError(err)
+		return models.Restaurant{}, err
+	}
+
+	createRestaurant.Id = int32(uid.ID())
+	ip, err := dynamodbattribute.MarshalMap(createRestaurant)
+	if err != nil {
+		printError(err)
+		return models.Restaurant{}, nil
+	}
+
+	svc := createSession()
+	input := &dynamodb.PutItemInput{
+		TableName: aws.String(tableName),
+		Item: ip,
+	}
+
+	_, err = svc.PutItem(input)
+	if err != nil {
+		printError(err)
+		return models.Restaurant{}, nil
+	}
+
+	return createRestaurant, nil
+	
 }

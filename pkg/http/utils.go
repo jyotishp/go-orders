@@ -7,7 +7,7 @@ import (
 
 func customerToPb(customer models.Customer) *pb.Customer  {
 	return &pb.Customer{
-		Name: customer.Name,
+		Name: customer.CustomerName,
 		Id:   customer.Id,
 		Address: addressToPb(customer.Address),
 	}
@@ -15,7 +15,7 @@ func customerToPb(customer models.Customer) *pb.Customer  {
 
 func restaurantToPb(restaurant models.Restaurant) *pb.Restaurant {
 	return &pb.Restaurant{
-		Name: restaurant.Name,
+		Name: restaurant.RestaurantName,
 		Id: restaurant.Id,
 		Address: addressToPb(restaurant.Address),
 		Items: itemsToPb(restaurant.Items),
@@ -24,7 +24,7 @@ func restaurantToPb(restaurant models.Restaurant) *pb.Restaurant {
 
 func createRestaurantNoItem(restaurant models.Restaurant) *pb.Restaurant {
 	return &pb.Restaurant{
-		Name: restaurant.Name,
+		Name: restaurant.RestaurantName,
 		Id: restaurant.Id,
 		Address: addressToPb(restaurant.Address),
 	}
@@ -46,20 +46,20 @@ func orderToPb(order models.Order) *pb.Order  {
 		Amount: order.Amount,
 		PaymentMethod: order.PaymentMethod,
 		Rating: order.Rating,
-		Duration: order.Duration,
+		Duration: order.OrderDuration,
 		Cuisine: order.Cuisine,
-		Time: order.Time,
+		Time: order.OrderTime,
 		Verified: order.Verified,
 		Customer: customerToPb(order.Customer),
 		Restaurant: createRestaurantNoItem(order.Restaurant),
-		Items: itemsToPb(order.Items),
+		Items: itemsToPb(order.OrderItems),
 	}
 }
 
 func itemToPb(item models.Item) *pb.Item {
 	return &pb.Item{
 		Id: item.Id,
-		Name: item.Name,
+		Name: item.ItemName,
 		Cuisine: item.Cuisine,
 		Discount: item.Discount,
 		Amount: item.Amount,
@@ -86,7 +86,7 @@ func pbToAddress(address *pb.Address) models.Address  {
 func pbToItem(item *pb.Item)  models.Item {
 	return models.Item{
 		Id: item.Id,
-		Name: item.Name,
+		ItemName: item.Name,
 		Cuisine: item.Cuisine,
 		Discount: item.Discount,
 		Amount: item.Amount,
@@ -99,4 +99,23 @@ func pbToItems(items []*pb.Item) []models.Item {
 		ip = append(ip, pbToItem(item))
 	}
 	return ip
+}
+
+func pbToCreateOrder(order *pb.CreateOrder) models.Order  {
+	return models.Order{
+		Restaurant: models.Restaurant{
+			Id: order.RestaurantId,
+		},
+		Customer: models.Customer{
+			Id: order.CustomerId,
+		},
+		Discount: order.Discount,
+		Amount: order.Amount,
+		PaymentMethod: order.PaymentMethod,
+		Rating: order.Rating,
+		OrderDuration: order.Duration,
+		Cuisine: order.Cuisine,
+		OrderTime: order.Time,
+		OrderItems: pbToItems(order.Items),
+	}
 }
