@@ -31,7 +31,10 @@ func createOrderTable(tableName string) {
 	}
 
 	_, err := svc.CreateTable(ip)
-	printAwsError(err)
+	if err != nil {
+		printAwsError(err)
+		return
+	}
 	fmt.Println("Successfully created ", tableName, " table.")
 }
 
@@ -59,7 +62,10 @@ func createRestaurantTable(tableName string) {
 	}
 
 	_, err := svc.CreateTable(ip)
-	printAwsError(err)
+	if err != nil {
+		printAwsError(err)
+		return
+	}
 	fmt.Println("Successfully created ", tableName, " table.")
 }
 
@@ -87,7 +93,10 @@ func createCustomerTable(tableName string) {
 	}
 
 	_, err := svc.CreateTable(ip)
-	printAwsError(err)
+	if err != nil {
+		printAwsError(err)
+		return
+	}
 	fmt.Println("Successfully created ", tableName, " table.")
 }
 
