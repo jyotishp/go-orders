@@ -4,6 +4,6 @@ import (
     pb "github.com/jyotishp/go-orders/pkg/proto"
 )
 
-type Server struct {
+type AnalysisServer struct {
     pb.UnimplementedAnalysisServer
 }

@@ -16,7 +16,7 @@ func StartGRPC() {
         log.Fatalf("Failed to listen: %v", err)
     }
     grpcServer := grpc.NewServer()
-    pb.RegisterAnalysisServer(grpcServer, &Server{})
+    pb.RegisterAnalysisServer(grpcServer, &AnalysisServer{})
     log.Println("gRPC server ready...")
     grpcServer.Serve(lis)
 }

@@ -6,24 +6,25 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"log"
 )
 
-func printAwsError(err error) {
-	if aerr, ok := err.(awserr.Error); ok {
-		switch aerr.Code() {
-		case dynamodb.ErrCodeInternalServerError:
-			fmt.Println(dynamodb.ErrCodeInternalServerError, aerr.Error())
-		case dynamodb.ErrCodeResourceInUseException:
-			fmt.Println(dynamodb.ErrCodeResourceInUseException, aerr.Error())
+func checkError(err error) {
+	if err != nil {
+		if aerr, ok := err.(awserr.Error); ok {
+			switch aerr.Code() {
+			case dynamodb.ErrCodeInternalServerError:
+				fmt.Println(dynamodb.ErrCodeInternalServerError, aerr.Error())
+			case dynamodb.ErrCodeResourceInUseException:
+				fmt.Println(dynamodb.ErrCodeResourceInUseException, aerr.Error())
 
-		default:
-			fmt.Println(aerr.Error())
+			default:
+				fmt.Println(aerr.Error())
+			}
+		} else {
+			// Print the error, cast err to awserr.Error to get the Code and
+			// Message from an error.
+			fmt.Println(err.Error())
 		}
-	} else {
-		// Print the error, cast err to awserr.Error to get the Code and
-		// Message from an error.
-		fmt.Println(err.Error())
 	}
 }
 
@@ -46,7 +47,7 @@ func checkTable(tableName string) bool  {
 	for {
 		result, err := svc.ListTables(input)
 		if err != nil {
-			printAwsError(err)
+			checkError(err)
 			return false
 		}
 
