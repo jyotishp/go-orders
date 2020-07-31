@@ -10,7 +10,7 @@ message OrderId {
 }
 
 // Item ID
-message ItemId {
+message ItemID {
   int32 item_id = 1;
 }
 
@@ -24,7 +24,7 @@ message CreateOrder {
   int32 duration = 6;
   string cuisine = 7;
   int32 time = 8;
-  repeated ItemId items = 9;
+  repeated ItemID items = 9;
 }
 
 // Update Order
