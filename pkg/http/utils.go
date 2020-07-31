@@ -5,20 +5,20 @@ import (
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 )
 
-func createCustomer(customer models.Customer) *pb.Customer  {
+func customerToPb(customer models.Customer) *pb.Customer  {
 	return &pb.Customer{
 		Name: customer.Name,
 		Id:   customer.Id,
-		Address: createAddress(customer.Address),
+		Address: addressToPb(customer.Address),
 	}
 }
 
-func createRestaurant(restaurant models.Restaurant) *pb.Restaurant {
+func restaurantToPb(restaurant models.Restaurant) *pb.Restaurant {
 	return &pb.Restaurant{
 		Name: restaurant.Name,
 		Id: restaurant.Id,
-		Address: createAddress(restaurant.Address),
-		Items: createItems(restaurant.Items),
+		Address: addressToPb(restaurant.Address),
+		Items: itemsToPb(restaurant.Items),
 	}
 }
 
@@ -26,11 +26,11 @@ func createRestaurantNoItem(restaurant models.Restaurant) *pb.Restaurant {
 	return &pb.Restaurant{
 		Name: restaurant.Name,
 		Id: restaurant.Id,
-		Address: createAddress(restaurant.Address),
+		Address: addressToPb(restaurant.Address),
 	}
 }
 
-func createAddress(address models.Address) *pb.Address {
+func addressToPb(address models.Address) *pb.Address {
 	return &pb.Address{
 		Line1: address.Line1,
 		Line2: address.Line2,
@@ -39,7 +39,7 @@ func createAddress(address models.Address) *pb.Address {
 	}
 }
 
-func createOrder(order models.Order) *pb.Order  {
+func orderToPb(order models.Order) *pb.Order  {
 	return &pb.Order{
 		Id: order.Id,
 		Discount: order.Discount,
@@ -50,13 +50,13 @@ func createOrder(order models.Order) *pb.Order  {
 		Cuisine: order.Cuisine,
 		Time: order.Time,
 		Verified: order.Verified,
-		Customer: createCustomer(order.Customer),
+		Customer: customerToPb(order.Customer),
 		Restaurant: createRestaurantNoItem(order.Restaurant),
-		Items: createItems(order.Items),
+		Items: itemsToPb(order.Items),
 	}
 }
 
-func createItem(item models.Item) *pb.Item {
+func itemToPb(item models.Item) *pb.Item {
 	return &pb.Item{
 		Id: item.Id,
 		Name: item.Name,
@@ -66,10 +66,37 @@ func createItem(item models.Item) *pb.Item {
 	}
 }
 
-func createItems(items []models.Item) *pb.ItemList {
+func itemsToPb(items []models.Item) *pb.ItemList {
 	itemList := &pb.ItemList{}
 	for _, item := range items {
-		itemList.Items = append(itemList.Items, createItem(item))
+		itemList.Items = append(itemList.Items, itemToPb(item))
 	}
 	return itemList
+}
+
+func pbToAddress(address *pb.Address) models.Address  {
+	return models.Address{
+		Line1: address.Line1,
+		Line2: address.Line2,
+		City: address.City,
+		State: address.State,
+	}
+}
+
+func pbToItem(item *pb.Item)  models.Item {
+	return models.Item{
+		Id: item.Id,
+		Name: item.Name,
+		Cuisine: item.Cuisine,
+		Discount: item.Discount,
+		Amount: item.Amount,
+	}
+}
+
+func pbToItems(items []*pb.Item) []models.Item {
+	ip := make([]models.Item, 0)
+	for _, item := range items {
+		ip = append(ip, pbToItem(item))
+	}
+	return ip
 }

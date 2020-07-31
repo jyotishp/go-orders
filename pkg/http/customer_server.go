@@ -16,21 +16,21 @@ const customerTableName = "Customers"
 func (s *CustomerServer) GetCustomer(ctx stdctx.Context, id *pb.CustomerId) (*pb.Customer, error) {
 	customer, err := db.GetCustomer(customerTableName, id.CustomerId)
 	if err != nil {
-		return &pb.Customer{}, err
+		return nil, err
 	}
-	return createCustomer(customer), nil
+	return customerToPb(customer), nil
 }
 
 func (s *CustomerServer) PostCustomer(ctx stdctx.Context, customer *pb.CreateCustomer) (*pb.Customer, error) {
 	ipCustomer := models.Customer{
 		Name: customer.Name,
-		Address: models.CreateAddressCreateCustomer(customer),
+		Address: pbToAddress(customer.Address),
 	}
-	newCustomer, err := db.CreateCustomer(customerTableName, ipCustomer)
+	newCustomer, err := db.InsertCustomer(customerTableName, ipCustomer)
 	if err != nil {
-		return &pb.Customer{}, nil
+		return nil, err
 	}
-	return createCustomer(newCustomer), nil
+	return customerToPb(newCustomer), nil
 }
 
 func (s *CustomerServer) PutCustomer(ctx stdctx.Context, customer *pb.UpdateCustomer) (*pb.Customer, error) {

@@ -43,7 +43,7 @@ func GetCustomer(tableName string, id int32) (models.Customer, error) {
 	return customer, nil
 }
 
-func CreateCustomer(tableName string, createCustomer models.Customer) (models.Customer, error) {
+func InsertCustomer(tableName string, createCustomer models.Customer) (models.Customer, error) {
 	uid, err := uuid.NewUUID()
 	if err != nil {
 		printError(err)

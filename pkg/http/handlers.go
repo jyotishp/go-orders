@@ -25,6 +25,7 @@ func StartGRPC() {
     pb.RegisterAnalysisServer(grpcServer, &AnalysisServer{})
     pb.RegisterCustomersServer(grpcServer, &CustomerServer{})
     pb.RegisterUtilsServer(grpcServer, &UtilsServer{})
+    pb.RegisterRestaurantsServer(grpcServer, &RestaurantsServer{})
 
     log.Println("gRPC server ready...")
     grpcServer.Serve(lis)
@@ -63,8 +64,8 @@ func StartHTTP() {
 
     rmux := runtime.NewServeMux()
 
-    customerClient := pb.NewCustomersClient(conn)
-    err = pb.RegisterCustomersHandlerClient(ctx, rmux, customerClient)
+    customersClient := pb.NewCustomersClient(conn)
+    err = pb.RegisterCustomersHandlerClient(ctx, rmux, customersClient)
     ClientErr(err)
 
     utilsClient := pb.NewUtilsClient(conn)
@@ -81,6 +82,10 @@ func StartHTTP() {
 
     analysisClient := pb.NewAnalysisClient(conn)
     err = pb.RegisterAnalysisHandlerClient(ctx, rmux, analysisClient)
+    ClientErr(err)
+
+    restaurantsClient := pb.NewRestaurantsClient(conn)
+    err = pb.RegisterRestaurantsHandlerClient(ctx, rmux, restaurantsClient)
     ClientErr(err)
 
 
