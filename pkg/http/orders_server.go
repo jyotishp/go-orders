@@ -35,7 +35,7 @@ func (s OrdersServer) PostOrder(ctx stdctx.Context, order *pb.CreateOrder) (*pb.
         Duration: order.Duration,
         Cuisine: order.Cuisine,
         Time: order.Time,
-        Items: pbToItems(order.Items.Items),
+        Items: pbToItems(order.Items),
     }
 
     newOrder, err := db.InsertOrder(ordersTableName, ipOrder)

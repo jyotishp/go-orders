@@ -25,7 +25,7 @@ message CreateOrder {
   int32 duration = 7;
   string cuisine = 8;
   int32 time = 9;
-  ItemList items = 10;
+  repeated Item items = 10;
 }
 
 // Update Order

@@ -16,8 +16,6 @@ func printError(err error) {
 				fmt.Println(dynamodb.ErrCodeInternalServerError, aerr.Error())
 			case dynamodb.ErrCodeResourceInUseException:
 				fmt.Println(dynamodb.ErrCodeResourceInUseException, aerr.Error())
-
-
 			default:
 				fmt.Println(aerr.Error())
 			}

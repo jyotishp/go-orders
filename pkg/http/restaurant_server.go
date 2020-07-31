@@ -3,6 +3,7 @@ package http
 import (
 	stdctx "context"
 	"github.com/jyotishp/go-orders/pkg/db"
+	"github.com/jyotishp/go-orders/pkg/models"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 )
 
@@ -24,7 +25,17 @@ func (r RestaurantsServer) GetRestaurantName(ctx stdctx.Context, name *pb.Restau
 }
 
 func (r RestaurantsServer) PostRestaurant(ctx stdctx.Context, restaurant *pb.CreateRestaurant) (*pb.Restaurant, error) {
-	panic("implement me")
+	ipRestaurant := models.Restaurant{
+		Name: restaurant.Name,
+		Address: pbToAddress(restaurant.Address),
+		Items: pbToItems(restaurant.Items),
+	}
+	newRestaurant, err := db.InsertRestaurant(restaurantsTableName, ipRestaurant)
+	if err != nil {
+		return nil, err
+	}
+
+	return  restaurantToPb(newRestaurant), nil
 }
 
 func (r RestaurantsServer) PutRestaurant(ctx stdctx.Context, restaurant *pb.UpdateRestaurant) (*pb.Restaurant, error) {

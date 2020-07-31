@@ -11,6 +11,6 @@ type UtilsServer struct {
 
 func (s UtilsServer) CreateTable(ctx stdctx.Context, table *pb.Table) (*pb.Empty, error) {
 	db.CreateTable(table.TableName)
-	return nil, nil
+	return &pb.Empty{}, nil
 }
 

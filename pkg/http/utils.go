@@ -66,10 +66,10 @@ func itemToPb(item models.Item) *pb.Item {
 	}
 }
 
-func itemsToPb(items []models.Item) *pb.ItemList {
-	itemList := &pb.ItemList{}
+func itemsToPb(items []models.Item) []*pb.Item {
+	itemList := make([]*pb.Item, 0)
 	for _, item := range items {
-		itemList.Items = append(itemList.Items, itemToPb(item))
+		itemList = append(itemList, itemToPb(item))
 	}
 	return itemList
 }
