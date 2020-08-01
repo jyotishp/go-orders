@@ -1,26 +1,44 @@
 all: proto run
 
-compile_proto: build
+install-proto:
+	sudo apt update && sudo apt install -y protobuf-compiler
+	go get -u -v github.com/golang/protobuf/protoc-gen-go
+
+compile-proto: pre-build proto-dependencies
 	protoc \
 	-I pkg \
-	-I ${GOPATH}/src/github.com/grpc-ecosystem/grpc-gateway \
+	-I ./vendor/github.com/grpc-ecosystem/grpc-gateway \
 	--go_out=plugins=grpc:. \
 	--grpc-gateway_out=logtostderr=true:. \
 	--swagger_out=logtostderr=true,allow_merge=true,merge_file_name=app:build \
 	--proto_path pkg/proto auth.proto customer.proto restaurant.proto orders.proto analysis.proto utils.proto
 
-build:
+pre-build:
 	mkdir -p build
+
+proto-dependencies:
+	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
+	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
+	go mod vendor
+	go install ./vendor/google.golang.org/grpc
+
+build: pre-build compile-proto
+	go build -o server cmd/server/main.go
 
 clean:
 	rm -rf build
+	rm -f swagger-ui/app.swagger.json
 
-fix_swagger:
+tests:
+	go test ./... -v -coverprofile coverage.out
+	go tool cover -func=coverage.out
+
+fix-swagger:
 	cat build/app.swagger.json | jq -c | sed 's/"title":".*\.proto"/"title":"Store"/g' > build/swagger.json && \
     mv build/swagger.json swagger-ui/app.swagger.json && \
     rm -f build/swagger.json
 
-proto: compile_proto fix_swagger
+proto: compile-proto fix-swagger
 
 run:
 	go run cmd/server/main.go
