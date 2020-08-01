@@ -76,7 +76,7 @@ func (dh *DataHandler) ProcessData(data []string) (*pb.Order, CustomerOrders, Or
     }
     cuisineState := CuisineState{
         Cuisine: order.Cuisine,
-        State:   customer.State,
+        State:   customer.Address.State,
     }
     cuisineCust := CuisineCustomers{
         Cuisine:    order.Cuisine,
