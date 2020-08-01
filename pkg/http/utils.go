@@ -74,6 +74,13 @@ func itemsToPb(items []models.Item) []*pb.Item {
 	return itemList
 }
 
+
+func itemListToPb(items []models.Item) *pb.ItemList {
+	return &pb.ItemList{
+		Items: itemsToPb(items),
+	}
+}
+
 func pbToAddress(address *pb.Address) models.Address  {
 	return models.Address{
 		Line1: address.Line1,
@@ -117,5 +124,13 @@ func pbToCreateOrder(order *pb.CreateOrder) models.Order  {
 		Cuisine: order.Cuisine,
 		Time: order.Time,
 		Items: pbToItems(order.Items),
+	}
+}
+
+func pbToFilter(filter *pb.ItemsFilter) models.ItemFilter {
+	return models.ItemFilter{
+		RestaurantId: filter.RestaurantId,
+		Min: filter.Min,
+		Max: filter.Max,
 	}
 }

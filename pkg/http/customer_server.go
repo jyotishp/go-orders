@@ -49,7 +49,7 @@ func (s *CustomerServer) PutCustomer(ctx stdctx.Context, customer *pb.UpdateCust
 }
 
 func (s *CustomerServer) DeleteCustomer(ctx stdctx.Context, id *pb.CustomerId) (*pb.Empty, error) {
-	err := db.DeleteItem(customerTableName, id.CustomerId)
+	err := db.DeleteKey(customerTableName, id.CustomerId)
 	return &pb.Empty{}, err
 }
 

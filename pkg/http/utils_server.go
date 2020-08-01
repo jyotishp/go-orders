@@ -14,3 +14,7 @@ func (s UtilsServer) CreateTable(ctx stdctx.Context, table *pb.Table) (*pb.Empty
 	return &pb.Empty{}, nil
 }
 
+func (s UtilsServer) DeleteTable(ctx stdctx.Context, table *pb.Table) (*pb.Empty, error) {
+	err := db.DeleteTable(table.TableName)
+	return &pb.Empty{}, err
+}

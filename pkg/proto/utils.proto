@@ -75,4 +75,9 @@ service Utils {
       get: "/v1/create-table/{table_name}"
     };
   }
+  rpc DeleteTable(Table) returns (Empty) {
+    option (google.api.http) = {
+      get: "/v1/delete-table/{table_name}"
+    };
+  }
 }

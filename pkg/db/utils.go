@@ -4,11 +4,23 @@ import (
 	"github.com/jyotishp/go-orders/pkg/models"
 )
 
-type dbItem struct {
-	Name string `json:"Name"`
-	Cuisine string `json:"Cuisine"`
-	Discount float32 `json:"Discount"`
-	Amount float32 `json:"Amount"`
+type dbItemIp struct {
+	RestaurantId int32
+	ItemId int32
+	Cuisine string
+	Discount float32
+	Amount float32
+}
+
+type dbItemUp struct {
+	Cuisine string `json:":ic"`
+	Discount float32 `json:":idc"`
+	Amount float32 `json:":iamt"`
+}
+
+type dbCustomer struct {
+	Name string `json:":cn"`
+	Address dbAddress `json:":cadr"`
 }
 
 type dbAddress struct {
@@ -18,9 +30,11 @@ type dbAddress struct {
 	State string `json:"State"`
 }
 
-type dbCustomer struct {
-	Name string `json:":cn"`
-	Address dbAddress `json:":cadr"`
+type dbItem struct {
+	Name string `json:"Name"`
+	Cuisine string `json:"Cuisine"`
+	Discount float32 `json:"Discount"`
+	Amount float32 `json:"Amount"`
 }
 
 type dbOrderCustomer struct {
@@ -118,4 +132,26 @@ func orderMap(order models.Order) dbOrder {
 		Restaurant: orderRestaurantNoItemsMap(order.Restaurant),
 		Items: itemsMap(order.Items),
 	}
+}
+
+func createItem(restaurantId int32, item models.Item) dbItemIp {
+	return dbItemIp{
+		RestaurantId: restaurantId,
+		ItemId: item.Id,
+		Cuisine: item.Cuisine,
+		Discount: item.Discount,
+		Amount: item.Amount,
+	}
+}
+
+func updateItemMap(item dbItemIp) dbItemUp {
+	return dbItemUp{
+		Cuisine: item.Cuisine,
+		Discount: item.Discount,
+		Amount: item.Amount,
+	}
+}
+
+func updateItemRest(restaurantId int32, item models.Item)   {
+	
 }

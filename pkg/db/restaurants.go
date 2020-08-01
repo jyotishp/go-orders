@@ -51,6 +51,14 @@ func InsertRestaurant(tableName string, createRestaurant models.Restaurant) (mod
 	}
 
 	createRestaurant.Id = int32(uid.ID())
+
+	for i, item := range createRestaurant.Items {
+		createRestaurant.Items[i], err = InsertItem("Items", createRestaurant.Id, item)
+		if err != nil {
+			return models.Restaurant{}, err
+		}
+	}
+
 	ip, err := dynamodbattribute.MarshalMap(createRestaurant)
 	if err != nil {
 		printError(err)
@@ -84,6 +92,13 @@ func UpdateRestaurant(tableName string, updateRestaurant models.Restaurant) (mod
 		return models.Restaurant{}, err
 	}
 
+	for i, item := range updateRestaurant.Items {
+		updateRestaurant.Items[i], err = UpdateItem("Items", updateRestaurant.Id, item)
+		if err != nil {
+			return models.Restaurant{}, err
+		}
+	}
+
 	rmap, err := dynamodbattribute.MarshalMap(restaurantMap(updateRestaurant))
 	if err != nil {
 		printError(err)
@@ -109,4 +124,25 @@ func UpdateRestaurant(tableName string, updateRestaurant models.Restaurant) (mod
 	}
 
 	return updateRestaurant, nil
+}
+
+func GetAllItems(tableName string, filter models.ItemFilter) ([]models.Item, error) {
+	items := make([]models.Item, 0)
+	restaurant, err := GetRestaurant(tableName, filter.RestaurantId)
+	if err != nil {
+		printError(err)
+		return items, err
+	}
+
+	if filter.Min == 0 && filter.Max == 0 {
+		return restaurant.Items, nil
+	}
+
+	for _, item := range restaurant.Items {
+		if item.Amount >= filter.Min && item.Amount <= filter.Max {
+			items = append(items, item)
+		}
+	}
+	return items, nil
+
 }

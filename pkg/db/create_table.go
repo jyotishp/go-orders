@@ -14,24 +14,56 @@ func CreateTable(tableName string) {
 
 	svc := createSession()
 
-	ip := &dynamodb.CreateTableInput{
-		TableName: aws.String(tableName),
-		AttributeDefinitions: []*dynamodb.AttributeDefinition{
-			{
-				AttributeName: aws.String("Id"),
-				AttributeType: aws.String("N"),
+	ip := &dynamodb.CreateTableInput{}
+
+	if tableName == "Items" {
+		ip = &dynamodb.CreateTableInput{
+			TableName: aws.String(tableName),
+			AttributeDefinitions: []*dynamodb.AttributeDefinition{
+				{
+					AttributeName: aws.String("ItemId"),
+					AttributeType: aws.String("N"),
+				},
+				{
+					AttributeName: aws.String("RestaurantId"),
+					AttributeType: aws.String("N"),
+				},
 			},
-		},
-		KeySchema: []*dynamodb.KeySchemaElement{
-			{
-				AttributeName: aws.String("Id"),
-				KeyType: aws.String("HASH"),
+			KeySchema: []*dynamodb.KeySchemaElement{
+				{
+					AttributeName: aws.String("RestaurantId"),
+					KeyType: aws.String("HASH"),
+				},
+				{
+					AttributeName: aws.String("ItemId"),
+					KeyType: aws.String("RANGE"),
+				},
 			},
-		},
-		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
-			ReadCapacityUnits: aws.Int64(10),
-			WriteCapacityUnits: aws.Int64(5),
-		},
+			ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+				ReadCapacityUnits: aws.Int64(10),
+				WriteCapacityUnits: aws.Int64(5),
+			},
+		}
+	} else {
+		ip = &dynamodb.CreateTableInput{
+			TableName: aws.String(tableName),
+			AttributeDefinitions: []*dynamodb.AttributeDefinition{
+				{
+					AttributeName: aws.String("Id"),
+					AttributeType: aws.String("N"),
+				},
+			},
+			KeySchema: []*dynamodb.KeySchemaElement{
+				{
+					AttributeName: aws.String("Id"),
+					KeyType: aws.String("HASH"),
+				},
+			},
+			ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+				ReadCapacityUnits: aws.Int64(10),
+				WriteCapacityUnits: aws.Int64(5),
+			},
+		}
 	}
 
 	_, err := svc.CreateTable(ip)

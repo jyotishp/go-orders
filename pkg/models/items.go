@@ -5,3 +5,9 @@ type Item struct {
 	Name, Cuisine string
 	Discount, Amount float32
 }
+
+type ItemFilter struct {
+	RestaurantId int32
+	Min float32
+	Max float32
+}
