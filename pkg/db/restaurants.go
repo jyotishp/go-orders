@@ -95,9 +95,10 @@ func UpdateRestaurant(tableName string, updateRestaurant models.Restaurant) (mod
 		Key: key,
 		ExpressionAttributeValues: rmap,
 		ExpressionAttributeNames: map[string]*string{
+			"#n": aws.String("Name"),
 			"#itms": aws.String("Items"),
 		},
-		UpdateExpression: aws.String("set RestaurantName=:rn, Address=:radr, #itms=:ritms"),
+		UpdateExpression: aws.String("set #n=:rn, Address=:radr, #itms=:ritms"),
 	}
 
 	svc := createSession()

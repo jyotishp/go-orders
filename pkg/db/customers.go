@@ -4,8 +4,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/jyotishp/go-orders/pkg/models"
 	"github.com/google/uuid"
+	"github.com/jyotishp/go-orders/pkg/models"
 )
 
 func GetCustomer(tableName string, id int32) (models.Customer, error) {
@@ -108,4 +108,5 @@ func UpdateCustomer(tableName string, updateCustomer models.Customer) (models.Cu
 	}
 
 	return updateCustomer, nil
+
 }

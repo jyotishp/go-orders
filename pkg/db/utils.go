@@ -5,28 +5,38 @@ import (
 )
 
 type dbItem struct {
-	IName string `json:":in"`
-	Cuisine string `json:":ic"`
-	Discount float32 `json:":idc"`
-	Amount float32 `json:":iamt"`
+	Name string `json:"Name"`
+	Cuisine string `json:"Cuisine"`
+	Discount float32 `json:"Discount"`
+	Amount float32 `json:"Amount"`
 }
 
 type dbAddress struct {
-	Line1 string `json:":l1"`
-	Line2 string `json:":l2"`
-	City string `json:":cty"`
-	State string `json:":st"`
+	Line1 string `json:"Line1"`
+	Line2 string `json:"Line2"`
+	City string `json:"City"`
+	State string `json:"State"`
 }
 
 type dbCustomer struct {
-	CName string `json:":cn"`
+	Name string `json:":cn"`
 	Address dbAddress `json:":cadr"`
 }
 
+type dbOrderCustomer struct {
+	Name string `json:"Name"`
+	Address dbAddress `json:"Address"`
+}
+
 type dbRestaurant struct {
-	RName string `json:":rn"`
+	Name string `json:":rn"`
 	Address dbAddress `json:":radr"`
 	Items []dbItem `json:":ritms"`
+}
+
+type dbOrderRestaurant struct {
+	Name string `json:"Name`
+	Address dbAddress `json:"Address"`
 }
 
 type dbOrder struct {
@@ -34,12 +44,12 @@ type dbOrder struct {
 	Amount float32 `json:":oamt"`
 	PaymentMethod string `json:":opm"`
 	Rating int32 `json:":or"`
-	OrderDuration int32 `json:":odtn"`
+	Duration int32 `json:":odtn"`
 	Cuisine string `json:":oc"`
 	Time int32 `json:":otm"`
 	Verified bool `json:":ov"`
-	Customer dbCustomer `json:":octmr"`
-	Restaurant dbRestaurant `json:":ortrnt"`
+	Customer dbOrderCustomer `json:":octmr"`
+	Restaurant dbOrderRestaurant `json:":ortrnt"`
 	Items []dbItem `json:":oitms"`
 }
 
@@ -47,7 +57,7 @@ func itemsMap(items []models.Item) []dbItem {
 	dbitems := make([]dbItem, 0)
 	for _, item := range items {
 		dbitems = append(dbitems, dbItem{
-			IName: item.Name,
+			Name: item.Name,
 			Cuisine: item.Cuisine,
 			Discount: item.Discount,
 			Amount: item.Amount,
@@ -58,26 +68,16 @@ func itemsMap(items []models.Item) []dbItem {
 
 func restaurantMap(restaurant models.Restaurant) dbRestaurant {
 	return dbRestaurant{
-		RName: restaurant.Name,
-		Address: dbAddress{
-			Line1: restaurant.Address.Line1,
-			Line2: restaurant.Address.Line2,
-			City:  restaurant.Address.City,
-			State: restaurant.Address.State,
-		},
+		Name: restaurant.Name,
+		Address: addressMap(restaurant.Address),
 		Items: itemsMap(restaurant.Items),
 	}
 }
 
-func restaurantNoItemsMap(restaurant models.Restaurant) dbRestaurant {
-	return dbRestaurant{
-		RName: restaurant.Name,
-		Address: dbAddress{
-			Line1: restaurant.Address.Line1,
-			Line2: restaurant.Address.Line2,
-			City:  restaurant.Address.City,
-			State: restaurant.Address.State,
-		},
+func orderRestaurantNoItemsMap(restaurant models.Restaurant) dbOrderRestaurant {
+	return dbOrderRestaurant{
+		Name: restaurant.Name,
+		Address: addressMap(restaurant.Address),
 	}
 }
 
@@ -92,7 +92,14 @@ func addressMap(address models.Address) dbAddress {
 
 func customerMap(customer models.Customer) dbCustomer {
 	return dbCustomer{
-		CName: customer.Name,
+		Name: customer.Name,
+		Address: addressMap(customer.Address),
+	}
+}
+
+func orderCustomerMap(customer models.Customer) dbOrderCustomer {
+	return dbOrderCustomer{
+		Name: customer.Name,
 		Address: addressMap(customer.Address),
 	}
 }
@@ -103,13 +110,12 @@ func orderMap(order models.Order) dbOrder {
 		Amount: order.Amount,
 		PaymentMethod: order.PaymentMethod,
 		Rating: order.Rating,
-		OrderDuration: order.Duration,
+		Duration: order.Duration,
 		Cuisine: order.Cuisine,
 		Time: order.Time,
 		Verified: order.Verified,
-		Customer: customerMap(order.Customer),
-		Restaurant: restaurantNoItemsMap(order.Restaurant),
+		Customer: orderCustomerMap(order.Customer),
+		Restaurant: orderRestaurantNoItemsMap(order.Restaurant),
 		Items: itemsMap(order.Items),
 	}
-
 }

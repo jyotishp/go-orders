@@ -44,6 +44,7 @@ func (r RestaurantsServer) PutRestaurant(ctx stdctx.Context, restaurant *pb.Upda
 		Address: pbToAddress(restaurant.Restaurant.Address),
 		Items: pbToItems(restaurant.Restaurant.Items),
 	}
+	ipRestaurant.Id = restaurant.RestaurantId
 	newRestaurant, err := db.UpdateRestaurant(restaurantsTableName, ipRestaurant)
 	if err != nil {
 		return &pb.Restaurant{}, err
