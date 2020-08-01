@@ -1,4 +1,4 @@
-package middlewares
+package interceptors
 
 import (
     "context"
@@ -8,15 +8,24 @@ import (
     "google.golang.org/grpc/metadata"
     "google.golang.org/grpc/status"
     "log"
+    "strings"
+    "time"
 )
 
 // Intercepts the requests for authentication
-type AuthMiddleware struct {
+type AuthInterceptor struct {
     Authenticator *auth.JwtAuthenticator
 }
 
+// Create instance of AuthMiddleware
+func NewAuthInterceptor(secret string, ttl time.Duration) *AuthInterceptor {
+    return &AuthInterceptor{
+        Authenticator: auth.NewJwtAuthenticator(secret, ttl),
+    }
+}
+
 // Unary Server Interceptor
-func (a *AuthMiddleware) Unary() grpc.UnaryServerInterceptor {
+func (a *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
     return func(
         ctx context.Context,
         req interface{},
@@ -27,12 +36,12 @@ func (a *AuthMiddleware) Unary() grpc.UnaryServerInterceptor {
         if err != nil {
             return nil, err
         }
-        return handler(ctx, req), nil
+        return handler(ctx, req)
     }
 }
 
 // Authenticate requests
-func (a *AuthMiddleware) Authenticate(ctx context.Context, method string) error {
+func (a *AuthInterceptor) Authenticate(ctx context.Context, method string) error {
     if method == "/protos.Authentication/Login" {
         return nil
     }
@@ -46,8 +55,11 @@ func (a *AuthMiddleware) Authenticate(ctx context.Context, method string) error 
         return status.Errorf(codes.Unauthenticated, "invalid authorization token")
     }
 
-    accessKey := values[0]
-    claims, err := a.Authenticator.ValidateToken(accessKey)
+    accessKey := strings.Split(values[0], " ")
+    if len(accessKey) != 2 {
+        return status.Errorf(codes.Unauthenticated, "token should be of the form 'Bearer <token>'")
+    }
+    claims, err := a.Authenticator.ValidateToken(accessKey[1])
     if err != nil {
         return status.Errorf(codes.Unauthenticated, "invalid token: %v", err)
     }
