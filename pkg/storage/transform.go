@@ -27,7 +27,7 @@ func NewOrder(data []string) *pb.Order {
 		Id:          ParseInt(data[0]),
 		Discount:    ParseFloat(data[1]),
 		Amount:      ParseFloat(data[2]),
-		PaymentMode: data[3],
+		PaymentMethod: data[3],
 		Rating:      ParseInt(data[4]),
 		Duration:    ParseInt(data[5]),
 		Cuisine:     data[6],
@@ -39,7 +39,7 @@ func NewCustomer(data []string) *pb.Customer {
 	return &pb.Customer{
 		Id:    ParseInt(data[11]),
 		Name:  data[12],
-		State: data[10],
+		Address: &pb.Address{State: data[10]},
 	}
 }
 
@@ -47,6 +47,6 @@ func NewRestaurant(data []string) *pb.Restaurant {
 	return &pb.Restaurant{
 		Id:    ParseInt(data[8]),
 		Name:  data[9],
-		State: data[10],
+		Address: &pb.Address{State: data[10]},
 	}
 }

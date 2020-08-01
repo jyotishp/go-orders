@@ -1,0 +1,19 @@
+name: Status
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: golang
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install protoc
+        run: make install-proto
+      - name: Build server binary
+        run: make build
+      - name: Run tests
+        run: make tests
