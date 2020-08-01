@@ -49,7 +49,8 @@ func (s *CustomerServer) PutCustomer(ctx stdctx.Context, customer *pb.UpdateCust
 }
 
 func (s *CustomerServer) DeleteCustomer(ctx stdctx.Context, id *pb.CustomerId) (*pb.Empty, error) {
-	return &pb.Empty{}, nil
+	err := db.DeleteItem(customerTableName, id.CustomerId)
+	return &pb.Empty{}, err
 }
 
 func (s *CustomerServer) ListCustomers(ctx context.Context, empty *pb.Empty) (*pb.CustomerList, error) {

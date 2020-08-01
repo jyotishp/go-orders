@@ -43,5 +43,6 @@ func (s OrdersServer) PutOrder(ctx stdctx.Context, order *pb.UpdateOrder) (*pb.O
 }
 
 func (s OrdersServer) DeleteOrder(ctx stdctx.Context, id *pb.OrderId) (*pb.Empty, error) {
-    panic("implement me")
+    err := db.DeleteItem(ordersTableName, id.OrderId)
+    return &pb.Empty{}, err
 }

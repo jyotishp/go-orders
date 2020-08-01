@@ -54,7 +54,8 @@ func (r RestaurantsServer) PutRestaurant(ctx stdctx.Context, restaurant *pb.Upda
 }
 
 func (r RestaurantsServer) DeleteRestaurant(ctx stdctx.Context, id *pb.RestaurantId) (*pb.Empty, error) {
-	panic("implement me")
+	err := db.DeleteItem(restaurantsTableName, id.RestaurantId)
+	return &pb.Empty{}, err
 }
 
 func (r RestaurantsServer) ListItems(ctx stdctx.Context, filter *pb.ItemsFilter) (*pb.ItemList, error) {
