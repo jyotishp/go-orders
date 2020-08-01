@@ -33,6 +33,13 @@ message Restaurant {
   repeated Item items = 4;
 }
 
+// Restaurant without all items
+message RestaurantNoItems {
+  int32 id = 1;
+  string name = 2;
+  Address address = 3;
+}
+
 // Address
 message Address {
   string line1 = 1;
@@ -41,7 +48,7 @@ message Address {
   string state = 4;
 }
 
-// Order
+// Order Output
 message Order {
   int32 id = 1;
   float discount = 2;
@@ -53,10 +60,9 @@ message Order {
   int32 time = 8;
   bool verified = 9;
   Customer customer = 10;
-  Restaurant restaurant = 11;
+  RestaurantNoItems restaurant = 11;
   repeated Item items = 12;
 }
-
 
 // Customer
 message Customer {

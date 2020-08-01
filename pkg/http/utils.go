@@ -22,8 +22,8 @@ func restaurantToPb(restaurant models.Restaurant) *pb.Restaurant {
 	}
 }
 
-func createRestaurantNoItem(restaurant models.Restaurant) *pb.Restaurant {
-	return &pb.Restaurant{
+func createRestaurantNoItem(restaurant models.RestaurantNoItems) *pb.RestaurantNoItems {
+	return &pb.RestaurantNoItems{
 		Name: restaurant.Name,
 		Id: restaurant.Id,
 		Address: addressToPb(restaurant.Address),
@@ -108,14 +108,10 @@ func pbToItems(items []*pb.Item) []models.Item {
 	return ip
 }
 
-func pbToCreateOrder(order *pb.CreateOrder) models.Order  {
-	return models.Order{
-		Restaurant: models.Restaurant{
-			Id: order.RestaurantId,
-		},
-		Customer: models.Customer{
-			Id: order.CustomerId,
-		},
+func pbToCreateOrder(order *pb.CreateOrder) models.OrderIp  {
+	return models.OrderIp{
+		RestaurantId: order.RestaurantId,
+		CustomerId: order.CustomerId,
 		Discount: order.Discount,
 		Amount: order.Amount,
 		PaymentMethod: order.PaymentMethod,
@@ -123,7 +119,7 @@ func pbToCreateOrder(order *pb.CreateOrder) models.Order  {
 		Duration: order.Duration,
 		Cuisine: order.Cuisine,
 		Time: order.Time,
-		Items: pbToItems(order.Items),
+		Items: order.Items,
 	}
 }
 

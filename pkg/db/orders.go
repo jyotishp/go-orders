@@ -43,7 +43,7 @@ func GetOrder(tableName string, id int32) (models.Order, error) {
 	return order, nil
 }
 
-func InsertOrder(tableName string, createOrder models.Order) (models.Order, error) {
+func InsertOrder(tableName string, createOrder models.OrderIp) (models.Order, error) {
 	uid, err := uuid.NewUUID()
 	if err != nil {
 		printError(err)
@@ -51,7 +51,9 @@ func InsertOrder(tableName string, createOrder models.Order) (models.Order, erro
 	}
 
 	createOrder.Id = int32(uid.ID())
-	ip, err := dynamodbattribute.MarshalMap(createOrder)
+
+	newOrder := buildOrder(createOrder)
+	ip, err := dynamodbattribute.MarshalMap(newOrder)
 	if err != nil {
 		printError(err)
 		return models.Order{}, nil
@@ -68,11 +70,10 @@ func InsertOrder(tableName string, createOrder models.Order) (models.Order, erro
 		printError(err)
 		return models.Order{}, nil
 	}
-
-	return createOrder, nil
+	return newOrder, nil
 }
 
-func UpdateOrder(tableName string, updateOrder models.Order) (models.Order, error) {
+func UpdateOrder(tableName string, updateOrder models.OrderIp) (models.Order, error) {
 	type KeyInput struct {
 		Id int32
 	}
@@ -83,7 +84,8 @@ func UpdateOrder(tableName string, updateOrder models.Order) (models.Order, erro
 		return models.Order{}, err
 	}
 
-	omap, err := dynamodbattribute.MarshalMap(orderMap(updateOrder))
+	newOrder := buildOrder(updateOrder)
+	omap, err := dynamodbattribute.MarshalMap(orderMap(newOrder))
 	if err != nil {
 		printError(err)
 		return models.Order{}, err
@@ -105,10 +107,6 @@ func UpdateOrder(tableName string, updateOrder models.Order) (models.Order, erro
 
 	svc := createSession()
 	_, err = svc.UpdateItem(input)
-	if err != nil {
-		printError(err)
-		return models.Order{}, err
-	}
 
-	return updateOrder, nil
+	return newOrder, nil
 }

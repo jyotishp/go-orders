@@ -89,7 +89,17 @@ func (r RestaurantsServer) PostItem(ctx stdctx.Context, item *pb.CreateItem) (*p
 }
 
 func (r RestaurantsServer) PutItem(ctx stdctx.Context, item *pb.UpdateItem) (*pb.Item, error) {
-	panic("implement me")
+	itemIp, err := db.UpdateItem("Items", item.RestaurantId, models.Item{
+		Id: item.ItemId,
+		Name: item.Item.Name,
+		Cuisine: item.Item.Cuisine,
+		Discount: item.Item.Discount,
+		Amount: item.Item.Amount,
+	})
+	if err != nil {
+		return &pb.Item{}, err
+	}
+	return itemToPb(itemIp), nil
 }
 
 func (r RestaurantsServer) DeleteItem(ctx stdctx.Context, id *pb.ItemId) (*pb.Empty, error) {

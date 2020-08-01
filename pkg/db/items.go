@@ -36,6 +36,7 @@ func GetItem(tableName string, restaurantId int32, itemId int32) (models.Item, e
 		printError(err)
 		return models.Item{}, err
 	}
+	opItem.Id = itemId
 	return opItem, nil
 }
 

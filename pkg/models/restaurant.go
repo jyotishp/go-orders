@@ -6,3 +6,9 @@ type Restaurant struct {
 	Address Address
 	Items []Item
 }
+
+type RestaurantNoItems struct {
+	Id int32
+	Name string
+	Address Address
+}

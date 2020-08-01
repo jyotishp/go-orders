@@ -88,7 +88,7 @@ func restaurantMap(restaurant models.Restaurant) dbRestaurant {
 	}
 }
 
-func orderRestaurantNoItemsMap(restaurant models.Restaurant) dbOrderRestaurant {
+func restaurantNoItemsMap(restaurant models.RestaurantNoItems) dbOrderRestaurant {
 	return dbOrderRestaurant{
 		Name: restaurant.Name,
 		Address: addressMap(restaurant.Address),
@@ -129,7 +129,7 @@ func orderMap(order models.Order) dbOrder {
 		Time: order.Time,
 		Verified: order.Verified,
 		Customer: orderCustomerMap(order.Customer),
-		Restaurant: orderRestaurantNoItemsMap(order.Restaurant),
+		Restaurant: restaurantNoItemsMap(order.Restaurant),
 		Items: itemsMap(order.Items),
 	}
 }
@@ -152,6 +152,42 @@ func updateItemMap(item dbItemIp) dbItemUp {
 	}
 }
 
-func updateItemRest(restaurantId int32, item models.Item)   {
-	
+func extractCustomer(id int32) models.Customer {
+	op, _ := GetCustomer("Customers", id)
+	return op
+}
+
+func extractRestaurant(id int32) models.RestaurantNoItems {
+	op, _ := GetRestaurant("Restaurants", id)
+	return models.RestaurantNoItems{
+		Name: op.Name,
+		Id: op.Id,
+		Address: op.Address,
+	}
+}
+
+func extractItems(restaurantId int32, itemIds []int32) []models.Item {
+	items := make([]models.Item, 0)
+	for _, id := range itemIds {
+		op, _ := GetItem("Items", restaurantId, id)
+		items = append(items, op)
+	}
+	return items
+}
+
+func buildOrder(order models.OrderIp) models.Order {
+	return models.Order{
+		Id: order.Id,
+		Discount: order.Discount,
+		Amount: order.Amount,
+		PaymentMethod: order.PaymentMethod,
+		Rating: order.Rating,
+		Duration: order.Duration,
+		Cuisine: order.Cuisine,
+		Time: order.Time,
+		Verified: order.Verified,
+		Customer: extractCustomer(order.CustomerId),
+		Restaurant: extractRestaurant(order.RestaurantId),
+		Items: extractItems(order.RestaurantId, order.Items),
+	}
 }
