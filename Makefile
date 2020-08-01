@@ -19,9 +19,9 @@ pre-build:
 proto-dependencies:
 	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 	go get github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
-	go mod vendor
 
 build: pre-build compile-proto
+	go mod vendor
 	go build -o server cmd/server/main.go
 
 clean:
@@ -30,7 +30,7 @@ clean:
 
 tests:
 	go test ./... -v -coverprofile coverage.out
-	go tool cover -func=coverage.out
+	go tool cover -html=c.out -o coverage.html
 
 fix-swagger:
 	cat build/app.swagger.json | jq -c | sed 's/"title":".*\.proto"/"title":"Store"/g' > build/swagger.json && \
