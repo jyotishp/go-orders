@@ -3,6 +3,7 @@ package http
 import (
     "context"
     "github.com/grpc-ecosystem/grpc-gateway/runtime"
+    "github.com/jyotishp/go-orders/pkg/interceptors"
     pb "github.com/jyotishp/go-orders/pkg/proto"
     "google.golang.org/grpc"
     "log"
@@ -17,13 +18,13 @@ func StartGRPC(jwtSecret string, jwtTtl time.Duration) {
         log.Fatalf("Failed to listen: %v", err)
     }
 
-    grpcServer := grpc.NewServer()
+    //grpcServer := grpc.NewServer()
 
-    //authMiddleware := interceptors.NewAuthInterceptor(jwtSecret, jwtTtl)
-    //grpcServer := grpc.NewServer(grpc.UnaryInterceptor(authMiddleware.Unary()))
+    authMiddleware := interceptors.NewAuthInterceptor(jwtSecret, jwtTtl)
+    grpcServer := grpc.NewServer(grpc.UnaryInterceptor(authMiddleware.Unary()))
 
-    //authServer := NewAuthServer("admin", "admin", jwtSecret, jwtTtl)
-    //pb.RegisterAuthenticationServer(grpcServer, authServer)
+    authServer := NewAuthServer("admin", "admin", jwtSecret, jwtTtl)
+    pb.RegisterAuthenticationServer(grpcServer, authServer)
 
     pb.RegisterOrdersServer(grpcServer, &OrdersServer{})
     pb.RegisterAnalysisServer(grpcServer, &AnalysisServer{})
