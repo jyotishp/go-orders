@@ -29,7 +29,7 @@ clean:
 	rm -f swagger-ui/app.swagger.json
 
 tests:
-	go test ./... -v -coverprofile coverage.out
+	go test ./... -v -coverprofile c.out
 	go tool cover -html=c.out -o coverage.html
 
 fix-swagger:
