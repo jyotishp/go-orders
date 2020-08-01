@@ -72,3 +72,40 @@ func InsertRestaurant(tableName string, createRestaurant models.Restaurant) (mod
 	return createRestaurant, nil
 	
 }
+
+func UpdateRestaurant(tableName string, updateRestaurant models.Restaurant) (models.Restaurant, error) {
+	type KeyInput struct {
+		Id int32
+	}
+
+	key, err := dynamodbattribute.MarshalMap(KeyInput{Id: updateRestaurant.Id})
+	if err != nil {
+		printError(err)
+		return models.Restaurant{}, err
+	}
+
+	rmap, err := dynamodbattribute.MarshalMap(restaurantMap(updateRestaurant))
+	if err != nil {
+		printError(err)
+		return models.Restaurant{}, err
+	}
+
+	input := &dynamodb.UpdateItemInput{
+		TableName: aws.String(tableName),
+		Key: key,
+		ExpressionAttributeValues: rmap,
+		ExpressionAttributeNames: map[string]*string{
+			"#itms": aws.String("Items"),
+		},
+		UpdateExpression: aws.String("set RestaurantName=:rn, Address=:radr, #itms=:ritms"),
+	}
+
+	svc := createSession()
+	_, err = svc.UpdateItem(input)
+	if err != nil {
+		printError(err)
+		return models.Restaurant{}, err
+	}
+
+	return updateRestaurant, nil
+}

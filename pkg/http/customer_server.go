@@ -23,7 +23,7 @@ func (s *CustomerServer) GetCustomer(ctx stdctx.Context, id *pb.CustomerId) (*pb
 
 func (s *CustomerServer) PostCustomer(ctx stdctx.Context, customer *pb.CreateCustomer) (*pb.Customer, error) {
 	ipCustomer := models.Customer{
-		CustomerName: customer.Name,
+		Name: customer.Name,
 		Address: pbToAddress(customer.Address),
 	}
 	newCustomer, err := db.InsertCustomer(customerTableName, ipCustomer)
@@ -36,7 +36,7 @@ func (s *CustomerServer) PostCustomer(ctx stdctx.Context, customer *pb.CreateCus
 func (s *CustomerServer) PutCustomer(ctx stdctx.Context, customer *pb.UpdateCustomer) (*pb.Customer, error) {
 	ipCustomer := models.Customer{
 		Id: customer.CustomerId,
-		CustomerName: customer.Customer.Name,
+		Name: customer.Customer.Name,
 		Address: pbToAddress(customer.Customer.Address),
 	}
 

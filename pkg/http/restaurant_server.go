@@ -26,7 +26,7 @@ func (r RestaurantsServer) GetRestaurantName(ctx stdctx.Context, name *pb.Restau
 
 func (r RestaurantsServer) PostRestaurant(ctx stdctx.Context, restaurant *pb.CreateRestaurant) (*pb.Restaurant, error) {
 	ipRestaurant := models.Restaurant{
-		RestaurantName: restaurant.Name,
+		Name: restaurant.Name,
 		Address: pbToAddress(restaurant.Address),
 		Items: pbToItems(restaurant.Items),
 	}
@@ -39,7 +39,17 @@ func (r RestaurantsServer) PostRestaurant(ctx stdctx.Context, restaurant *pb.Cre
 }
 
 func (r RestaurantsServer) PutRestaurant(ctx stdctx.Context, restaurant *pb.UpdateRestaurant) (*pb.Restaurant, error) {
-	panic("implement me")
+	ipRestaurant := models.Restaurant{
+		Name: restaurant.Restaurant.Name,
+		Address: pbToAddress(restaurant.Restaurant.Address),
+		Items: pbToItems(restaurant.Restaurant.Items),
+	}
+	newRestaurant, err := db.UpdateRestaurant(restaurantsTableName, ipRestaurant)
+	if err != nil {
+		return &pb.Restaurant{}, err
+	}
+
+	return  restaurantToPb(newRestaurant), nil
 }
 
 func (r RestaurantsServer) DeleteRestaurant(ctx stdctx.Context, id *pb.RestaurantId) (*pb.Empty, error) {

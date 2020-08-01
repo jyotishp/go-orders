@@ -93,9 +93,14 @@ func UpdateOrder(tableName string, updateOrder models.Order) (models.Order, erro
 		TableName: aws.String(tableName),
 		Key: key,
 		ExpressionAttributeValues: omap,
+		ExpressionAttributeNames: map[string]*string{
+			"#dur": aws.String("Duration"),
+			"#tm": aws.String("Time"),
+			"#itms": aws.String("Items"),
+		},
 		UpdateExpression: aws.String("set Discount=:od, Amount=:oamt, PaymentMethod=:opm, " +
-			"Rating=:or, OrderDuration=:odtn, Cuisine=:oc, OrderTime=:otm, Verified=:ov, " +
-			"Customer=:octmr, Restaurant=:ortrnt, OrderItems=:oitms"),
+			"Rating=:or, #dur=:odtn, Cuisine=:oc, #tm=:otm, Verified=:ov, " +
+			"Customer=:octmr, Restaurant=:ortrnt, #itms=:oitms"),
 	}
 
 	svc := createSession()

@@ -7,7 +7,7 @@ import (
 
 func customerToPb(customer models.Customer) *pb.Customer  {
 	return &pb.Customer{
-		Name: customer.CustomerName,
+		Name: customer.Name,
 		Id:   customer.Id,
 		Address: addressToPb(customer.Address),
 	}
@@ -15,7 +15,7 @@ func customerToPb(customer models.Customer) *pb.Customer  {
 
 func restaurantToPb(restaurant models.Restaurant) *pb.Restaurant {
 	return &pb.Restaurant{
-		Name: restaurant.RestaurantName,
+		Name: restaurant.Name,
 		Id: restaurant.Id,
 		Address: addressToPb(restaurant.Address),
 		Items: itemsToPb(restaurant.Items),
@@ -24,7 +24,7 @@ func restaurantToPb(restaurant models.Restaurant) *pb.Restaurant {
 
 func createRestaurantNoItem(restaurant models.Restaurant) *pb.Restaurant {
 	return &pb.Restaurant{
-		Name: restaurant.RestaurantName,
+		Name: restaurant.Name,
 		Id: restaurant.Id,
 		Address: addressToPb(restaurant.Address),
 	}
@@ -46,20 +46,20 @@ func orderToPb(order models.Order) *pb.Order  {
 		Amount: order.Amount,
 		PaymentMethod: order.PaymentMethod,
 		Rating: order.Rating,
-		Duration: order.OrderDuration,
+		Duration: order.Duration,
 		Cuisine: order.Cuisine,
-		Time: order.OrderTime,
+		Time: order.Time,
 		Verified: order.Verified,
 		Customer: customerToPb(order.Customer),
 		Restaurant: createRestaurantNoItem(order.Restaurant),
-		Items: itemsToPb(order.OrderItems),
+		Items: itemsToPb(order.Items),
 	}
 }
 
 func itemToPb(item models.Item) *pb.Item {
 	return &pb.Item{
 		Id: item.Id,
-		Name: item.ItemName,
+		Name: item.Name,
 		Cuisine: item.Cuisine,
 		Discount: item.Discount,
 		Amount: item.Amount,
@@ -86,7 +86,7 @@ func pbToAddress(address *pb.Address) models.Address  {
 func pbToItem(item *pb.Item)  models.Item {
 	return models.Item{
 		Id: item.Id,
-		ItemName: item.Name,
+		Name: item.Name,
 		Cuisine: item.Cuisine,
 		Discount: item.Discount,
 		Amount: item.Amount,
@@ -113,9 +113,9 @@ func pbToCreateOrder(order *pb.CreateOrder) models.Order  {
 		Amount: order.Amount,
 		PaymentMethod: order.PaymentMethod,
 		Rating: order.Rating,
-		OrderDuration: order.Duration,
+		Duration: order.Duration,
 		Cuisine: order.Cuisine,
-		OrderTime: order.Time,
-		OrderItems: pbToItems(order.Items),
+		Time: order.Time,
+		Items: pbToItems(order.Items),
 	}
 }

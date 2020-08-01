@@ -2,7 +2,7 @@ package models
 
 type Restaurant struct {
 	Id int32
-	RestaurantName string
+	Name string
 	Address Address
 	Items []Item
 }

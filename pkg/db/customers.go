@@ -94,7 +94,10 @@ func UpdateCustomer(tableName string, updateCustomer models.Customer) (models.Cu
 		TableName: aws.String(tableName),
 		Key: key,
 		ExpressionAttributeValues: cm,
-		UpdateExpression: aws.String("set CName = :cn, Address = :cadr"),
+		ExpressionAttributeNames: map[string]*string{
+			"#n": aws.String("Name"),
+		},
+		UpdateExpression: aws.String("set #n = :cn, Address = :cadr"),
 	}
 
 	svc := createSession()

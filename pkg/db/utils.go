@@ -47,7 +47,7 @@ func itemsMap(items []models.Item) []dbItem {
 	dbitems := make([]dbItem, 0)
 	for _, item := range items {
 		dbitems = append(dbitems, dbItem{
-			IName: item.ItemName,
+			IName: item.Name,
 			Cuisine: item.Cuisine,
 			Discount: item.Discount,
 			Amount: item.Amount,
@@ -58,7 +58,20 @@ func itemsMap(items []models.Item) []dbItem {
 
 func restaurantMap(restaurant models.Restaurant) dbRestaurant {
 	return dbRestaurant{
-		RName: restaurant.RestaurantName,
+		RName: restaurant.Name,
+		Address: dbAddress{
+			Line1: restaurant.Address.Line1,
+			Line2: restaurant.Address.Line2,
+			City:  restaurant.Address.City,
+			State: restaurant.Address.State,
+		},
+		Items: itemsMap(restaurant.Items),
+	}
+}
+
+func restaurantNoItemsMap(restaurant models.Restaurant) dbRestaurant {
+	return dbRestaurant{
+		RName: restaurant.Name,
 		Address: dbAddress{
 			Line1: restaurant.Address.Line1,
 			Line2: restaurant.Address.Line2,
@@ -79,7 +92,7 @@ func addressMap(address models.Address) dbAddress {
 
 func customerMap(customer models.Customer) dbCustomer {
 	return dbCustomer{
-		CName: customer.CustomerName,
+		CName: customer.Name,
 		Address: addressMap(customer.Address),
 	}
 }
@@ -90,13 +103,13 @@ func orderMap(order models.Order) dbOrder {
 		Amount: order.Amount,
 		PaymentMethod: order.PaymentMethod,
 		Rating: order.Rating,
-		OrderDuration: order.OrderDuration,
+		OrderDuration: order.Duration,
 		Cuisine: order.Cuisine,
-		Time: order.OrderTime,
+		Time: order.Time,
 		Verified: order.Verified,
 		Customer: customerMap(order.Customer),
-		Restaurant: restaurantMap(order.Restaurant),
-		Items: itemsMap(order.OrderItems),
+		Restaurant: restaurantNoItemsMap(order.Restaurant),
+		Items: itemsMap(order.Items),
 	}
 
 }
