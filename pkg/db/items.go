@@ -40,7 +40,7 @@ func GetItem(tableName string, restaurantId int32, itemId int32) (models.Item, e
 	return opItem, nil
 }
 
-func InsertItem(tableName string, restaurantId int32, item models.Item) (models.Item ,error) {
+func InsertItem(tableName string, restaurantId int32, item models.Item, updateRestaurants bool) (models.Item ,error) {
 	uid, err := uuid.NewUUID()
 	if err != nil {
 		printError(err)
@@ -65,6 +65,19 @@ func InsertItem(tableName string, restaurantId int32, item models.Item) (models.
 	if err != nil {
 		printError(err)
 		return models.Item{}, err
+	}
+	if updateRestaurants {
+		restaurant, err := GetRestaurant("Restaurants", restaurantId)
+		if err != nil {
+			printError(err)
+			return models.Item{}, err
+		}
+		restaurant.Items = append(restaurant.Items, item)
+		_, err = UpdateRestaurant("Restaurants", restaurant, false)
+		if err != nil {
+			printError(err)
+			return models.Item{}, err
+		}
 	}
 	return item, nil
 }
@@ -96,6 +109,61 @@ func UpdateItem(tableName string, restaurantId int32, item models.Item) (models.
 		printError(err)
 		return models.Item{}, err
 	}
+	restaurant, err := GetRestaurant("Restaurants", restaurantId)
+	if err != nil {
+		printError(err)
+		return models.Item{}, err
+	}
+
+	for idx, itm := range restaurant.Items {
+		if itm.Id == item.Id {
+			restaurant.Items[idx] = item
+		}
+	}
+	_, err = UpdateRestaurant("Restaurants", restaurant, false)
+	if err != nil {
+		printError(err)
+		return models.Item{}, err
+	}
 
 	return item, nil
+}
+
+func DeleteItem(tableName string, restaurantId, itemId int32) error {
+	type KeyInput struct {
+		RestaurantId, ItemId int32
+	}
+
+	key, err := dynamodbattribute.MarshalMap(KeyInput{RestaurantId: restaurantId, ItemId: itemId})
+	if err != nil {
+		printError(err)
+		return err
+	}
+
+	input := &dynamodb.DeleteItemInput{
+		TableName: aws.String(tableName),
+		Key: key,
+	}
+
+	restaurant, err := GetRestaurant("Restaurants", restaurantId)
+	if err != nil {
+		printError(err)
+		return err
+	}
+	itms := make([]models.Item, 0)
+	for _, itm := range restaurant.Items {
+		if itm.Id != itemId {
+			itms = append(itms, itm)
+		}
+	}
+	restaurant.Items = itms
+	_, err = UpdateRestaurant("Restaurants", restaurant, false)
+	if err != nil {
+		printError(err)
+		return err
+	}
+
+	svc := createSession()
+	_, err = svc.DeleteItem(input)
+	return err
 }

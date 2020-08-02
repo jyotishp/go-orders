@@ -22,14 +22,18 @@ func (r RestaurantsServer) GetRestaurant(ctx stdctx.Context, id *pb.RestaurantId
 }
 
 func (r RestaurantsServer) GetRestaurantName(ctx stdctx.Context, name *pb.RestaurantName) (*pb.RestaurantList, error) {
-	panic("implement me")
+	restaurantList, err := db.GetRestaurantName(restaurantsTableName, name.RestaurantName)
+	if err != nil {
+		return &pb.RestaurantList{}, err
+	}
+	return restaurantListToPb(restaurantList), nil
 }
 
 func (r RestaurantsServer) PostRestaurant(ctx stdctx.Context, restaurant *pb.CreateRestaurant) (*pb.Restaurant, error) {
 	ipRestaurant := models.Restaurant{
 		Name: restaurant.Name,
 		Address: pbToAddress(restaurant.Address),
-		Items: pbToItems(restaurant.Items),
+		Items: pbToCreateItems(restaurant.Items),
 	}
 	newRestaurant, err := db.InsertRestaurant(restaurantsTableName, ipRestaurant)
 	if err != nil {
@@ -41,12 +45,12 @@ func (r RestaurantsServer) PostRestaurant(ctx stdctx.Context, restaurant *pb.Cre
 
 func (r RestaurantsServer) PutRestaurant(ctx stdctx.Context, restaurant *pb.UpdateRestaurant) (*pb.Restaurant, error) {
 	ipRestaurant := models.Restaurant{
+		Id: restaurant.RestaurantId,
 		Name: restaurant.Restaurant.Name,
 		Address: pbToAddress(restaurant.Restaurant.Address),
-		Items: pbToItems(restaurant.Restaurant.Items),
+		Items: pbToCreateItems(restaurant.Restaurant.Items),
 	}
-	ipRestaurant.Id = restaurant.RestaurantId
-	newRestaurant, err := db.UpdateRestaurant(restaurantsTableName, ipRestaurant)
+	newRestaurant, err := db.UpdateRestaurant(restaurantsTableName, ipRestaurant, true)
 	if err != nil {
 		return &pb.Restaurant{}, err
 	}
@@ -76,12 +80,7 @@ func (r RestaurantsServer) GetItem(ctx stdctx.Context, id *pb.ItemId) (*pb.Item,
 }
 
 func (r RestaurantsServer) PostItem(ctx stdctx.Context, item *pb.CreateItem) (*pb.Item, error) {
-	itemIp, err := db.InsertItem(itemsTableName, item.RestaurantId, models.Item{
-		Name: item.Item.Name,
-		Cuisine: item.Item.Cuisine,
-		Discount: item.Item.Discount,
-		Amount: item.Item.Amount,
-	})
+	itemIp, err := db.InsertItem(itemsTableName, item.RestaurantId, pbToCreateItem(item.Item), true)
 	if err != nil {
 		return &pb.Item{}, err
 	}
@@ -89,13 +88,9 @@ func (r RestaurantsServer) PostItem(ctx stdctx.Context, item *pb.CreateItem) (*p
 }
 
 func (r RestaurantsServer) PutItem(ctx stdctx.Context, item *pb.UpdateItem) (*pb.Item, error) {
-	itemIp, err := db.UpdateItem("Items", item.RestaurantId, models.Item{
-		Id: item.ItemId,
-		Name: item.Item.Name,
-		Cuisine: item.Item.Cuisine,
-		Discount: item.Item.Discount,
-		Amount: item.Item.Amount,
-	})
+	ip := pbToCreateItem(item.Item)
+	ip.Id = item.ItemId
+	itemIp, err := db.UpdateItem("Items", item.RestaurantId, ip)
 	if err != nil {
 		return &pb.Item{}, err
 	}
@@ -103,6 +98,7 @@ func (r RestaurantsServer) PutItem(ctx stdctx.Context, item *pb.UpdateItem) (*pb
 }
 
 func (r RestaurantsServer) DeleteItem(ctx stdctx.Context, id *pb.ItemId) (*pb.Empty, error) {
-	panic("implement me")
+	err := db.DeleteItem(itemsTableName, id.RestaurantId, id.ItemId)
+	return &pb.Empty{}, err
 }
 

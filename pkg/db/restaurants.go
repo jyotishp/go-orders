@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/google/uuid"
 	"github.com/jyotishp/go-orders/pkg/models"
 )
@@ -43,6 +44,37 @@ func GetRestaurant(tableName string, id int32) (models.Restaurant, error) {
 	return restaurant, nil
 }
 
+func GetRestaurantName(tableName string, restaurantName string) ([]models.Restaurant, error) {
+	filter := expression.Name("Name").Equal(expression.Value(restaurantName))
+	proj := expression.NamesList(expression.Name("Id"),
+		expression.Name("Name"), expression.Name("Address"), expression.Name("Items"))
+	expr, err := expression.NewBuilder().WithFilter(filter).WithProjection(proj).Build()
+	restaurantList := make([]models.Restaurant, 0)
+	if err != nil {
+		printError(err)
+		return restaurantList, err
+	}
+	params := &dynamodb.ScanInput{
+		TableName: aws.String(tableName),
+		ExpressionAttributeNames: expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		FilterExpression: expr.Filter(),
+		ProjectionExpression: expr.Projection(),
+	}
+	svc := createSession()
+	res, err := svc.Scan(params)
+	for _, item := range res.Items {
+		restaurant := models.Restaurant{}
+		err := dynamodbattribute.UnmarshalMap(item, &restaurant)
+		if err != nil {
+			printError(err)
+			return restaurantList, err
+		}
+		restaurantList = append(restaurantList, restaurant)
+	}
+	return restaurantList, nil
+}
+
 func InsertRestaurant(tableName string, createRestaurant models.Restaurant) (models.Restaurant, error) {
 	uid, err := uuid.NewUUID()
 	if err != nil {
@@ -51,15 +83,7 @@ func InsertRestaurant(tableName string, createRestaurant models.Restaurant) (mod
 	}
 
 	createRestaurant.Id = int32(uid.ID())
-
-	for i, item := range createRestaurant.Items {
-		createRestaurant.Items[i], err = InsertItem("Items", createRestaurant.Id, item)
-		if err != nil {
-			return models.Restaurant{}, err
-		}
-	}
-
-	ip, err := dynamodbattribute.MarshalMap(createRestaurant)
+	ip, err := dynamodbattribute.MarshalMap(buildRestaurant(createRestaurant))
 	if err != nil {
 		printError(err)
 		return models.Restaurant{}, nil
@@ -76,12 +100,17 @@ func InsertRestaurant(tableName string, createRestaurant models.Restaurant) (mod
 		printError(err)
 		return models.Restaurant{}, nil
 	}
-
+	createRestaurant.Items = insertItems(createRestaurant.Id, createRestaurant.Items, false)
+	_, err = UpdateRestaurant(tableName, createRestaurant, false)
+	if err != nil {
+		printError(err)
+		return models.Restaurant{}, err
+	}
 	return createRestaurant, nil
 	
 }
 
-func UpdateRestaurant(tableName string, updateRestaurant models.Restaurant) (models.Restaurant, error) {
+func UpdateRestaurant(tableName string, updateRestaurant models.Restaurant, updateItems bool) (models.Restaurant, error) {
 	type KeyInput struct {
 		Id int32
 	}
@@ -92,13 +121,9 @@ func UpdateRestaurant(tableName string, updateRestaurant models.Restaurant) (mod
 		return models.Restaurant{}, err
 	}
 
-	for i, item := range updateRestaurant.Items {
-		updateRestaurant.Items[i], err = UpdateItem("Items", updateRestaurant.Id, item)
-		if err != nil {
-			return models.Restaurant{}, err
-		}
+	if updateItems {
+		updateRestaurant.Items = insertItems(updateRestaurant.Id, updateRestaurant.Items, false)
 	}
-
 	rmap, err := dynamodbattribute.MarshalMap(restaurantMap(updateRestaurant))
 	if err != nil {
 		printError(err)

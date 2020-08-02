@@ -22,6 +22,16 @@ func restaurantToPb(restaurant models.Restaurant) *pb.Restaurant {
 	}
 }
 
+func restaurantListToPb(restaurantList []models.Restaurant) *pb.RestaurantList {
+	op := make([]*pb.Restaurant, 0)
+	for _, restaurant := range restaurantList {
+		op = append(op, restaurantToPb(restaurant))
+	}
+	return &pb.RestaurantList{
+		Restaurants: op,
+	}
+}
+
 func createRestaurantNoItem(restaurant models.RestaurantNoItems) *pb.RestaurantNoItems {
 	return &pb.RestaurantNoItems{
 		Name: restaurant.Name,
@@ -129,4 +139,21 @@ func pbToFilter(filter *pb.ItemsFilter) models.ItemFilter {
 		Min: filter.Min,
 		Max: filter.Max,
 	}
+}
+
+func pbToCreateItem(item *pb.CreateItemParams) models.Item {
+	return models.Item{
+		Name: item.Name,
+		Cuisine: item.Cuisine,
+		Discount: item.Discount,
+		Amount: item.Amount,
+	}
+}
+
+func pbToCreateItems(items []*pb.CreateItemParams) []models.Item {
+	op := make([]models.Item, 0)
+	for _, item := range items {
+		op = append(op, pbToCreateItem(item))
+	}
+	return op
 }

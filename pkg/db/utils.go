@@ -1,11 +1,13 @@
 package db
 
 import (
+	"fmt"
 	"github.com/jyotishp/go-orders/pkg/models"
 )
 
 type dbItemIp struct {
 	RestaurantId int32
+	Name string
 	ItemId int32
 	Cuisine string
 	Discount float32
@@ -31,6 +33,7 @@ type dbAddress struct {
 }
 
 type dbItem struct {
+	Id int32 `json:"Id"`
 	Name string `json:"Name"`
 	Cuisine string `json:"Cuisine"`
 	Discount float32 `json:"Discount"`
@@ -71,6 +74,7 @@ func itemsMap(items []models.Item) []dbItem {
 	dbitems := make([]dbItem, 0)
 	for _, item := range items {
 		dbitems = append(dbitems, dbItem{
+			Id: item.Id,
 			Name: item.Name,
 			Cuisine: item.Cuisine,
 			Discount: item.Discount,
@@ -169,7 +173,11 @@ func extractRestaurant(id int32) models.RestaurantNoItems {
 func extractItems(restaurantId int32, itemIds []int32) []models.Item {
 	items := make([]models.Item, 0)
 	for _, id := range itemIds {
-		op, _ := GetItem("Items", restaurantId, id)
+		op, err := GetItem("Items", restaurantId, id)
+		fmt.Println("ITEM -> ", op)
+		if err != nil {
+			panic(err.Error())
+		}
 		items = append(items, op)
 	}
 	return items
@@ -190,4 +198,25 @@ func buildOrder(order models.OrderIp) models.Order {
 		Restaurant: extractRestaurant(order.RestaurantId),
 		Items: extractItems(order.RestaurantId, order.Items),
 	}
+}
+
+func buildRestaurant(restaurant models.Restaurant) models.Restaurant {
+	return models.Restaurant{
+		Id: restaurant.Id,
+		Name: restaurant.Name,
+		Address: restaurant.Address,
+	}
+}
+
+func insertItems(restaurantId int32, items []models.Item, updateRestaurants bool) []models.Item {
+	op := make([]models.Item, 0)
+	for _, item := range items {
+		opItem, err := InsertItem("Items", restaurantId, item, updateRestaurants)
+		if err != nil {
+			printError(err)
+			return op
+		}
+		op = append(op, opItem)
+	}
+	return op
 }

@@ -52,7 +52,7 @@ message RestaurantId {
 message CreateRestaurant {
   string name = 1;
   Address address = 2;
-  repeated Item items = 3;
+  repeated CreateItemParams items = 3;
 }
 
 // Update Restaurant
