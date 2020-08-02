@@ -54,5 +54,9 @@ func (s *CustomerServer) DeleteCustomer(ctx stdctx.Context, id *pb.CustomerId) (
 }
 
 func (s *CustomerServer) ListCustomers(ctx context.Context, empty *pb.Empty) (*pb.CustomerList, error) {
-	return &pb.CustomerList{}, nil
+	customerList, err := db.GetAllCustomers(customerTableName)
+	if err != nil {
+		return &pb.CustomerList{}, err
+	}
+	return customerListToPb(customerList), nil
 }

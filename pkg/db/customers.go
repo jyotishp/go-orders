@@ -110,3 +110,26 @@ func UpdateCustomer(tableName string, updateCustomer models.Customer) (models.Cu
 	return updateCustomer, nil
 
 }
+
+func GetAllCustomers(tableName string) ([]models.Customer, error) {
+	ip := &dynamodb.ScanInput{
+		TableName: aws.String(tableName),
+	}
+	op := make([]models.Customer, 0)
+	svc := createSession()
+	res, err := svc.Scan(ip)
+	if err != nil {
+		printError(err)
+		return op, err
+	}
+	for _, item := range res.Items {
+		customer := models.Customer{}
+		err = dynamodbattribute.UnmarshalMap(item, &customer)
+		if err != nil {
+			printError(err)
+			return op, err
+		}
+		op = append(op, customer)
+	}
+	return op, nil
+}

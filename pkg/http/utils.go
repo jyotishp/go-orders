@@ -32,6 +32,16 @@ func restaurantListToPb(restaurantList []models.Restaurant) *pb.RestaurantList {
 	}
 }
 
+func customerListToPb(customerList []models.Customer) *pb.CustomerList {
+	op := make([]*pb.Customer, 0)
+	for _, customer := range customerList {
+		op = append(op, customerToPb(customer))
+	}
+	return &pb.CustomerList{
+		Customer: op,
+	}
+}
+
 func createRestaurantNoItem(restaurant models.RestaurantNoItems) *pb.RestaurantNoItems {
 	return &pb.RestaurantNoItems{
 		Name: restaurant.Name,
