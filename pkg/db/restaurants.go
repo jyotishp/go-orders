@@ -75,6 +75,39 @@ func GetRestaurantName(tableName string, restaurantName string) ([]models.Restau
 	return restaurantList, nil
 }
 
+func GetRestaurantSGI(tableName string, restaurantName string) ([]models.Restaurant, error) {
+	restaurantList := make([]models.Restaurant, 0)
+	ip := &dynamodb.QueryInput{
+		TableName: aws.String(tableName),
+		IndexName: aws.String("RName"),
+		KeyConditionExpression: aws.String("#n=:n"),
+		ExpressionAttributeNames: map[string]*string{
+			"#n": aws.String("Name"),
+		},
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":n": {
+				S: aws.String(restaurantName),
+			},
+		},
+	}
+	svc := createSession()
+	res, err := svc.Query(ip)
+	if err != nil {
+		printError(err)
+		return restaurantList, err
+	}
+	for _, item := range res.Items {
+		restaurant := models.Restaurant{}
+		err := dynamodbattribute.UnmarshalMap(item, &restaurant)
+		if err != nil {
+			printError(err)
+			return restaurantList, err
+		}
+		restaurantList = append(restaurantList, restaurant)
+	}
+	return restaurantList, nil
+}
+
 func InsertRestaurant(tableName string, createRestaurant models.Restaurant) (models.Restaurant, error) {
 	uid, err := uuid.NewUUID()
 	if err != nil {

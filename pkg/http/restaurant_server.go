@@ -22,7 +22,8 @@ func (r RestaurantsServer) GetRestaurant(ctx stdctx.Context, id *pb.RestaurantId
 }
 
 func (r RestaurantsServer) GetRestaurantName(ctx stdctx.Context, name *pb.RestaurantName) (*pb.RestaurantList, error) {
-	restaurantList, err := db.GetRestaurantName(restaurantsTableName, name.RestaurantName)
+	//restaurantList, err := db.GetRestaurantName(restaurantsTableName, name.RestaurantName)
+	restaurantList, err := db.GetRestaurantSGI(restaurantsTableName, name.RestaurantName)
 	if err != nil {
 		return &pb.RestaurantList{}, err
 	}
