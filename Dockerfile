@@ -6,6 +6,8 @@ ARG REPO_NAMESPACE=jyotishp/go-orders
 ENV CGO_ENABLED 0
 ENV REPO_PATH /go/src/${REPO_HOST}/${REPO_NAMESPACE}
 
+RUN apt update && apt install -y sudo
+
 COPY . ${REPO_PATH}
 WORKDIR ${REPO_PATH}
 

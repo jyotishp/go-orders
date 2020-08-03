@@ -1,7 +1,7 @@
 all: proto run
 
 install-proto:
-	apt update && apt install -y protobuf-compiler
+	sudo apt update && sudo apt install -y protobuf-compiler
 	go get -u -v github.com/golang/protobuf/protoc-gen-go
 
 compile-proto: pre-build proto-dependencies
