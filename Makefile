@@ -45,4 +45,5 @@ run:
 process-data:
 	go run cmd/dataprocessing/main.go
 
-
+docker:
+	docker build -t go-orders .
