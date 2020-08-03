@@ -1,11 +1,12 @@
 package http
 
 import (
-	"github.com/jyotishp/go-orders/pkg/models"
+	"fmt"
+	"github.com/jyotishp/go-orders/pkg/db"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 )
 
-func customerToPb(customer models.Customer) *pb.Customer  {
+func customerToPb(customer db.Customer) *pb.Customer  {
 	return &pb.Customer{
 		Name: customer.Name,
 		Id:   customer.Id,
@@ -13,7 +14,7 @@ func customerToPb(customer models.Customer) *pb.Customer  {
 	}
 }
 
-func restaurantToPb(restaurant models.Restaurant) *pb.Restaurant {
+func restaurantToPb(restaurant db.Restaurant) *pb.Restaurant {
 	return &pb.Restaurant{
 		Name: restaurant.Name,
 		Id: restaurant.Id,
@@ -22,7 +23,7 @@ func restaurantToPb(restaurant models.Restaurant) *pb.Restaurant {
 	}
 }
 
-func restaurantListToPb(restaurantList []models.Restaurant) *pb.RestaurantList {
+func restaurantListToPb(restaurantList []db.Restaurant) *pb.RestaurantList {
 	op := make([]*pb.Restaurant, 0)
 	for _, restaurant := range restaurantList {
 		op = append(op, restaurantToPb(restaurant))
@@ -32,7 +33,7 @@ func restaurantListToPb(restaurantList []models.Restaurant) *pb.RestaurantList {
 	}
 }
 
-func customerListToPb(customerList []models.Customer) *pb.CustomerList {
+func customerListToPb(customerList []db.Customer) *pb.CustomerList {
 	op := make([]*pb.Customer, 0)
 	for _, customer := range customerList {
 		op = append(op, customerToPb(customer))
@@ -42,7 +43,7 @@ func customerListToPb(customerList []models.Customer) *pb.CustomerList {
 	}
 }
 
-func createRestaurantNoItem(restaurant models.RestaurantNoItems) *pb.RestaurantNoItems {
+func createRestaurantNoItem(restaurant db.RestaurantNoItems) *pb.RestaurantNoItems {
 	return &pb.RestaurantNoItems{
 		Name: restaurant.Name,
 		Id: restaurant.Id,
@@ -50,7 +51,7 @@ func createRestaurantNoItem(restaurant models.RestaurantNoItems) *pb.RestaurantN
 	}
 }
 
-func addressToPb(address models.Address) *pb.Address {
+func addressToPb(address db.Address) *pb.Address {
 	return &pb.Address{
 		Line1: address.Line1,
 		Line2: address.Line2,
@@ -59,7 +60,7 @@ func addressToPb(address models.Address) *pb.Address {
 	}
 }
 
-func orderToPb(order models.Order) *pb.Order  {
+func orderToPb(order db.Order) *pb.Order  {
 	return &pb.Order{
 		Id: order.Id,
 		Discount: order.Discount,
@@ -76,7 +77,7 @@ func orderToPb(order models.Order) *pb.Order  {
 	}
 }
 
-func itemToPb(item models.Item) *pb.Item {
+func itemToPb(item db.Item) *pb.Item {
 	return &pb.Item{
 		Id: item.Id,
 		Name: item.Name,
@@ -86,7 +87,7 @@ func itemToPb(item models.Item) *pb.Item {
 	}
 }
 
-func itemsToPb(items []models.Item) []*pb.Item {
+func itemsToPb(items []db.Item) []*pb.Item {
 	itemList := make([]*pb.Item, 0)
 	for _, item := range items {
 		itemList = append(itemList, itemToPb(item))
@@ -95,14 +96,81 @@ func itemsToPb(items []models.Item) []*pb.Item {
 }
 
 
-func itemListToPb(items []models.Item) *pb.ItemList {
+func itemListToPb(items []db.Item) *pb.ItemList {
 	return &pb.ItemList{
 		Items: itemsToPb(items),
 	}
 }
+//
+//func pbToAddress(address *pb.Address) db.Address  {
+//	return db.Address{
+//		Line1: address.Line1,
+//		Line2: address.Line2,
+//		City: address.City,
+//		State: address.State,
+//	}
+//}
 
-func pbToAddress(address *pb.Address) models.Address  {
-	return models.Address{
+//func pbToItem(item *pb.Item)  db.Item {
+//	return db.Item{
+//		Id: item.Id,
+//		Name: item.Name,
+//		Cuisine: item.Cuisine,
+//		Discount: item.Discount,
+//		Amount: item.Amount,
+//	}
+//}
+//
+//func pbToItems(items []*pb.Item) []db.Item {
+//	ip := make([]db.Item, 0)
+//	for _, item := range items {
+//		ip = append(ip, pbToItem(item))
+//	}
+//	return ip
+//}
+
+//func pbToCreateOrder(order *pb.CreateOrder) db.OrderIp  {
+//	return db.OrderIp{
+//		RestaurantId: order.RestaurantId,
+//		CustomerId: order.CustomerId,
+//		Discount: order.Discount,
+//		Amount: order.Amount,
+//		PaymentMethod: order.PaymentMethod,
+//		Rating: order.Rating,
+//		Duration: order.Duration,
+//		Cuisine: order.Cuisine,
+//		Time: order.Time,
+//		Items: order.Items,
+//	}
+//}
+//
+//func pbToFilter(filter *pb.ItemsFilter) db.ItemFilter {
+//	return db.ItemFilter{
+//		RestaurantId: filter.RestaurantId,
+//		Min: filter.Min,
+//		Max: filter.Max,
+//	}
+//}
+
+func pbToCreateItem(item *pb.CreateItemParams) db.Item {
+	return db.Item{
+		Name: item.Name,
+		Cuisine: item.Cuisine,
+		Discount: item.Discount,
+		Amount: item.Amount,
+	}
+}
+
+func pbToCreateItems(items []*pb.CreateItemParams) []db.Item {
+	op := make([]db.Item, 0)
+	for _, item := range items {
+		op = append(op, pbToCreateItem(item))
+	}
+	return op
+}
+
+func pbToAddress(address *pb.Address) db.Address  {
+	return db.Address{
 		Line1: address.Line1,
 		Line2: address.Line2,
 		City: address.City,
@@ -110,28 +178,52 @@ func pbToAddress(address *pb.Address) models.Address  {
 	}
 }
 
-func pbToItem(item *pb.Item)  models.Item {
-	return models.Item{
-		Id: item.Id,
-		Name: item.Name,
-		Cuisine: item.Cuisine,
-		Discount: item.Discount,
-		Amount: item.Amount,
+func pbToCreateCustomer(customer *pb.CreateCustomer) db.Customer {
+	return db.Customer{
+		Name: customer.Name,
+		Address: pbToAddress(customer.Address),
 	}
 }
 
-func pbToItems(items []*pb.Item) []models.Item {
-	ip := make([]models.Item, 0)
-	for _, item := range items {
-		ip = append(ip, pbToItem(item))
+func pbToUpdateCustomer(customer *pb.UpdateCustomer) db.Customer {
+	return db.Customer{
+		Id: customer.CustomerId,
+		Name: customer.Customer.Name,
+		Address: pbToAddress(customer.Customer.Address),
 	}
-	return ip
 }
 
-func pbToCreateOrder(order *pb.CreateOrder) models.OrderIp  {
-	return models.OrderIp{
-		RestaurantId: order.RestaurantId,
-		CustomerId: order.CustomerId,
+func extractCustomer(id int32) db.Customer {
+	op, _ := db.GetCustomer("Customers", id)
+	return op
+}
+
+func extractRestaurant(id int32) db.RestaurantNoItems {
+	op, _ := db.GetRestaurant("Restaurants", id)
+	return db.RestaurantNoItems{
+		Name: op.Name,
+		Id: op.Id,
+		Address: op.Address,
+	}
+}
+
+func extractItems(restaurantId int32, itemIds []int32) []db.Item {
+	items := make([]db.Item, 0)
+	for _, id := range itemIds {
+		op, err := db.GetItem("Items", restaurantId, id)
+		fmt.Println("ITEM -> ", op)
+		if err != nil {
+			panic(err.Error())
+		}
+		items = append(items, op)
+	}
+	return items
+}
+
+func pbToCreateOrder(order *pb.CreateOrder) db.Order  {
+	return db.Order{
+		Restaurant: extractRestaurant(order.RestaurantId),
+		Customer: extractCustomer(order.CustomerId),
 		Discount: order.Discount,
 		Amount: order.Amount,
 		PaymentMethod: order.PaymentMethod,
@@ -139,31 +231,40 @@ func pbToCreateOrder(order *pb.CreateOrder) models.OrderIp  {
 		Duration: order.Duration,
 		Cuisine: order.Cuisine,
 		Time: order.Time,
-		Items: order.Items,
+		Items: extractItems(order.RestaurantId, order.Items),
 	}
 }
 
-func pbToFilter(filter *pb.ItemsFilter) models.ItemFilter {
-	return models.ItemFilter{
-		RestaurantId: filter.RestaurantId,
-		Min: filter.Min,
-		Max: filter.Max,
+func pbToUpdateOrder(order *pb.UpdateOrder) db.OrderIp {
+	return db.OrderIp{
+		Id: order.OrderId,
+		Discount: order.Order.Discount,
+		Amount: order.Order.Amount,
+		PaymentMethod: order.Order.PaymentMethod,
+		Rating: order.Order.Rating,
+		Duration: order.Order.Duration,
+		Cuisine: order.Order.Cuisine,
+		Time: order.Order.Time,
+		Verified: order.Order.Verified,
+		Customer: extractCustomer(order.Order.CustomerId),
+		Restaurant: extractRestaurant(order.Order.RestaurantId),
+		Items: extractItems(order.Order.RestaurantId, order.Order.Items),
 	}
 }
 
-func pbToCreateItem(item *pb.CreateItemParams) models.Item {
-	return models.Item{
-		Name: item.Name,
-		Cuisine: item.Cuisine,
-		Discount: item.Discount,
-		Amount: item.Amount,
+func pbToCreateRestaurant(restaurant *pb.CreateRestaurant) db.Restaurant {
+	return db.Restaurant{
+		Name: restaurant.Name,
+		Address: pbToAddress(restaurant.Address),
+		Items: pbToCreateItems(restaurant.Items),
 	}
 }
 
-func pbToCreateItems(items []*pb.CreateItemParams) []models.Item {
-	op := make([]models.Item, 0)
-	for _, item := range items {
-		op = append(op, pbToCreateItem(item))
+func pbToUpdateRestaurant(restaurant *pb.UpdateRestaurant) db.Restaurant {
+	return db.Restaurant{
+		Id:      restaurant.RestaurantId,
+		Name:    restaurant.Restaurant.Name,
+		Address: pbToAddress(restaurant.Restaurant.Address),
+		Items:   pbToCreateItems(restaurant.Restaurant.Items),
 	}
-	return op
 }

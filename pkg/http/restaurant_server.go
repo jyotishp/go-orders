@@ -3,7 +3,6 @@ package http
 import (
 	stdctx "context"
 	"github.com/jyotishp/go-orders/pkg/db"
-	"github.com/jyotishp/go-orders/pkg/models"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 )
 
@@ -22,7 +21,6 @@ func (r RestaurantsServer) GetRestaurant(ctx stdctx.Context, id *pb.RestaurantId
 }
 
 func (r RestaurantsServer) GetRestaurantName(ctx stdctx.Context, name *pb.RestaurantName) (*pb.RestaurantList, error) {
-	//restaurantList, err := db.GetRestaurantName(restaurantsTableName, name.RestaurantName)
 	restaurantList, err := db.GetRestaurantSGI(restaurantsTableName, name.RestaurantName)
 	if err != nil {
 		return &pb.RestaurantList{}, err
@@ -31,32 +29,13 @@ func (r RestaurantsServer) GetRestaurantName(ctx stdctx.Context, name *pb.Restau
 }
 
 func (r RestaurantsServer) PostRestaurant(ctx stdctx.Context, restaurant *pb.CreateRestaurant) (*pb.Restaurant, error) {
-	ipRestaurant := models.Restaurant{
-		Name: restaurant.Name,
-		Address: pbToAddress(restaurant.Address),
-		Items: pbToCreateItems(restaurant.Items),
-	}
-	newRestaurant, err := db.InsertRestaurant(restaurantsTableName, ipRestaurant)
-	if err != nil {
-		return &pb.Restaurant{}, err
-	}
-
-	return  restaurantToPb(newRestaurant), nil
+	newRestaurant, err := db.InsertRestaurant(restaurantsTableName, pbToCreateRestaurant(restaurant))
+	return  restaurantToPb(newRestaurant), err
 }
 
 func (r RestaurantsServer) PutRestaurant(ctx stdctx.Context, restaurant *pb.UpdateRestaurant) (*pb.Restaurant, error) {
-	ipRestaurant := models.Restaurant{
-		Id: restaurant.RestaurantId,
-		Name: restaurant.Restaurant.Name,
-		Address: pbToAddress(restaurant.Restaurant.Address),
-		Items: pbToCreateItems(restaurant.Restaurant.Items),
-	}
-	newRestaurant, err := db.UpdateRestaurant(restaurantsTableName, ipRestaurant, true)
-	if err != nil {
-		return &pb.Restaurant{}, err
-	}
-
-	return  restaurantToPb(newRestaurant), nil
+	newRestaurant, err := db.UpdateRestaurant(restaurantsTableName, pbToUpdateRestaurant(restaurant), true)
+	return  restaurantToPb(newRestaurant), err
 }
 
 func (r RestaurantsServer) DeleteRestaurant(ctx stdctx.Context, id *pb.RestaurantId) (*pb.Empty, error) {
@@ -65,11 +44,8 @@ func (r RestaurantsServer) DeleteRestaurant(ctx stdctx.Context, id *pb.Restauran
 }
 
 func (r RestaurantsServer) ListItems(ctx stdctx.Context, filter *pb.ItemsFilter) (*pb.ItemList, error) {
-	items, err := db.GetAllItems(restaurantsTableName, pbToFilter(filter))
-	if err != nil {
-		return &pb.ItemList{}, nil
-	}
-	return itemListToPb(items), nil
+	items, err := db.GetAllItems(restaurantsTableName, filter)
+	return itemListToPb(items), err
 }
 
 func (r RestaurantsServer) GetItem(ctx stdctx.Context, id *pb.ItemId) (*pb.Item, error) {

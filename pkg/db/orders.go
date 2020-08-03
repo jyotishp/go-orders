@@ -5,10 +5,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/google/uuid"
-	"github.com/jyotishp/go-orders/pkg/models"
 )
 
-func GetOrder(tableName string, id int32) (models.Order, error) {
+func GetOrder(tableName string, id int32) (Order, error) {
 	type Input struct {
 		Id int32
 	}
@@ -16,7 +15,7 @@ func GetOrder(tableName string, id int32) (models.Order, error) {
 	key, err := dynamodbattribute.MarshalMap(Input{Id: id})
 	if err != nil {
 		printError(err)
-		return models.Order{}, err
+		return Order{}, err
 	}
 
 	ip := &dynamodb.GetItemInput{
@@ -29,34 +28,33 @@ func GetOrder(tableName string, id int32) (models.Order, error) {
 	res, err := svc.GetItem(ip)
 	if err != nil {
 		printError(err)
-		return models.Order{}, err
+		return Order{}, err
 	}
 
-	order := models.Order{}
+	order := Order{}
 
 	err = dynamodbattribute.UnmarshalMap(res.Item, &order)
 	if err != nil {
 		printError(err)
-		return models.Order{}, err
+		return Order{}, err
 	}
 
 	return order, nil
 }
 
-func InsertOrder(tableName string, createOrder models.OrderIp) (models.Order, error) {
+func InsertOrder(tableName string, createOrder Order) (Order, error) {
 	uid, err := uuid.NewUUID()
 	if err != nil {
 		printError(err)
-		return models.Order{}, err
+		return Order{}, err
 	}
 
 	createOrder.Id = int32(uid.ID())
 
-	newOrder := buildOrder(createOrder)
-	ip, err := dynamodbattribute.MarshalMap(newOrder)
+	ip, err := dynamodbattribute.MarshalMap(createOrder)
 	if err != nil {
 		printError(err)
-		return models.Order{}, nil
+		return Order{}, nil
 	}
 
 	svc := createSession()
@@ -68,12 +66,12 @@ func InsertOrder(tableName string, createOrder models.OrderIp) (models.Order, er
 	_, err = svc.PutItem(input)
 	if err != nil {
 		printError(err)
-		return models.Order{}, nil
+		return Order{}, nil
 	}
-	return newOrder, nil
+	return createOrder, nil
 }
 
-func UpdateOrder(tableName string, updateOrder models.OrderIp) (models.Order, error) {
+func UpdateOrder(tableName string, updateOrder OrderIp) (Order, error) {
 	type KeyInput struct {
 		Id int32
 	}
@@ -81,14 +79,14 @@ func UpdateOrder(tableName string, updateOrder models.OrderIp) (models.Order, er
 	key, err := dynamodbattribute.MarshalMap(KeyInput{Id: updateOrder.Id})
 	if err != nil {
 		printError(err)
-		return models.Order{}, err
+		return Order{}, err
 	}
 
-	newOrder := buildOrder(updateOrder)
-	omap, err := dynamodbattribute.MarshalMap(orderMap(newOrder))
+	orderNoKey := removeOrderId(updateOrder)
+	omap, err := dynamodbattribute.MarshalMap(orderNoKey)
 	if err != nil {
 		printError(err)
-		return models.Order{}, err
+		return Order{}, err
 	}
 
 	input := &dynamodb.UpdateItemInput{
@@ -100,13 +98,19 @@ func UpdateOrder(tableName string, updateOrder models.OrderIp) (models.Order, er
 			"#tm": aws.String("Time"),
 			"#itms": aws.String("Items"),
 		},
-		UpdateExpression: aws.String("set Discount=:od, Amount=:oamt, PaymentMethod=:opm, " +
-			"Rating=:or, #dur=:odtn, Cuisine=:oc, #tm=:otm, Verified=:ov, " +
-			"Customer=:octmr, Restaurant=:ortrnt, #itms=:oitms"),
+		UpdateExpression: aws.String("set Discount=:d, Amount=:amt, PaymentMethod=:pm, " +
+			"Rating=:r, #dur=:dn, Cuisine=:c, #tm=:t, Verified=:v, " +
+			"Customer=:ctmr, Restaurant=:rt, #itms=:itms"),
 	}
 
 	svc := createSession()
 	_, err = svc.UpdateItem(input)
+	if err != nil {
+		printError(err)
+		return Order{}, err
+	}
 
-	return newOrder, nil
+	op := toNormalOrder(updateOrder)
+
+	return op, nil
 }
