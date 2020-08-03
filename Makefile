@@ -1,7 +1,7 @@
 all: proto run
 
 install-proto:
-	sudo apt update && sudo apt install -y protobuf-compiler
+	apt update && apt install -y protobuf-compiler
 	go get -u -v github.com/golang/protobuf/protoc-gen-go
 
 compile-proto: pre-build proto-dependencies
@@ -45,4 +45,5 @@ run:
 process-data:
 	go run cmd/dataprocessing/main.go
 
-
+docker:
+	docker build -t go-orders .
