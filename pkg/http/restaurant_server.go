@@ -60,7 +60,7 @@ func (r RestaurantsServer) PutRestaurant(ctx stdctx.Context, restaurant *pb.Upda
 }
 
 func (r RestaurantsServer) DeleteRestaurant(ctx stdctx.Context, id *pb.RestaurantId) (*pb.Empty, error) {
-	err := db.DeleteKey(restaurantsTableName, id.RestaurantId)
+	err := db.DeleteRestaurant(restaurantsTableName, id.RestaurantId)
 	return &pb.Empty{}, err
 }
 

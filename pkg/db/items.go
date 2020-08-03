@@ -36,6 +36,9 @@ func GetItem(tableName string, restaurantId int32, itemId int32) (models.Item, e
 		printError(err)
 		return models.Item{}, err
 	}
+	if opItem == (models.Item{}) {
+		return opItem, nil
+	}
 	opItem.Id = itemId
 	return opItem, nil
 }
