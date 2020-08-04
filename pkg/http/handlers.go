@@ -2,10 +2,10 @@ package http
 
 import (
 	"context"
-	"github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/jyotishp/go-orders/pkg/interceptors"
 	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/jyotishp/go-orders/pkg/interceptors"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
@@ -16,7 +16,7 @@ import (
 )
 
 func StartGRPC(jwtSecret string, jwtTtl time.Duration) {
-	lis, err := net.Listen("tcp", "localhost:5566")
+	lis, err := net.Listen("tcp", "0.0.0.0:5566")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
@@ -31,10 +31,10 @@ func StartGRPC(jwtSecret string, jwtTtl time.Duration) {
 	authServer := NewAuthServer("admin", "admin", jwtSecret, jwtTtl)
 	pb.RegisterAuthenticationServer(grpcServer, authServer)
 
-	pb.RegisterOrdersServer(grpcServer, &OrdersServer{})
-	pb.RegisterAnalysisServer(grpcServer, &AnalysisServer{})
 	pb.RegisterCustomersServer(grpcServer, &CustomerServer{})
 	pb.RegisterUtilsServer(grpcServer, &UtilsServer{})
+	pb.RegisterOrdersServer(grpcServer, &OrdersServer{})
+	pb.RegisterAnalysisServer(grpcServer, &AnalysisServer{})
 	pb.RegisterRestaurantsServer(grpcServer, &RestaurantsServer{})
 
 	grpc_prometheus.Register(grpcServer)
@@ -112,7 +112,7 @@ func StartHTTP() {
 	fs := http.FileServer(http.Dir("swagger-ui"))
 	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui", fs))
 
-	err = http.ListenAndServe("localhost:8080", mux)
+	err = http.ListenAndServe("0.0.0.0:8080", mux)
 	if err != nil {
 		log.Fatal(err)
 	}
