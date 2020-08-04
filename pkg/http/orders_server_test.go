@@ -4,27 +4,29 @@ import (
 	"context"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/test/bufconn"
-	"log"
 	"testing"
 )
 
 
-func init() {
-	lis = bufconn.Listen(bufSize)
-	s := grpc.NewServer()
-	pb.RegisterOrdersServer(s, &OrdersServer{})
+//func init() {
+//	lis = bufconn.Listen(bufSize)
+//	s := grpc.NewServer()
+//	pb.RegisterOrdersServer(s,&OrdersServer{})
+//
+//	go func() {
+//		if err := s.Serve(lis); err != nil {
+//			log.Fatalf("Server exited with error: %v", err)
+//		}
+//	}()
+//}
 
-	go func() {
-		if err := s.Serve(lis); err != nil {
-			log.Fatalf("Server exited with error: %v", err)
-		}
-	}()
-}
+
+
+
 
 func TestGetOrder(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
@@ -40,8 +42,8 @@ func TestGetOrder(t *testing.T) {
 }
 
 func TestPostOrder(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
@@ -67,8 +69,8 @@ func TestPostOrder(t *testing.T) {
 
 
 func TestPutOrder(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
@@ -98,8 +100,8 @@ func TestPutOrder(t *testing.T) {
 
 
 func TestDeleteOrder(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}

@@ -4,27 +4,25 @@ import (
 	"context"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/test/bufconn"
-	"log"
 	"testing"
 )
 
 
-func init() {
-	lis = bufconn.Listen(bufSize)
-	s := grpc.NewServer()
-	pb.RegisterRestaurantsServer(s,&RestaurantsServer{})
-
-	go func() {
-		if err := s.Serve(lis); err != nil {
-			log.Fatalf("Server exited with error: %v", err)
-		}
-	}()
-}
+//func init() {
+//	lis = bufconn.Listen(bufSize)
+//	s := grpc.NewServer()
+//	pb.RegisterRestaurantsServer(s,&RestaurantsServer{})
+//
+//	go func() {
+//		if err := s.Serve(lis); err != nil {
+//			log.Fatalf("Server exited with error: %v", err)
+//		}
+//	}()
+//}
 
 func TestGetRestaurant(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
@@ -40,15 +38,15 @@ func TestGetRestaurant(t *testing.T) {
 }
 
 func TestGetRestaurantName(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
 	defer conn.Close()
 	client := pb.NewRestaurantsClient(conn)
 	req := &pb.RestaurantName{
-		RestaurantName: "Motimahal",
+		RestaurantName: "BBQ",
 	}
 	_, err = client.GetRestaurantName(context.Background(),req)
 	if err != nil {
@@ -57,8 +55,8 @@ func TestGetRestaurantName(t *testing.T) {
 }
 
 func TestPostRestaurant(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
@@ -66,7 +64,7 @@ func TestPostRestaurant(t *testing.T) {
 	client := pb.NewRestaurantsClient(conn)
 	req := &pb.CreateRestaurant{
 		Name:    "xyz",
-		Address: nil,
+		Address: &pb.Address{},
 		Items:   nil,
 	}
 	_, err = client.PostRestaurant(context.Background(),req)
@@ -76,16 +74,20 @@ func TestPostRestaurant(t *testing.T) {
 }
 
 func TestPutRestaurant(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
 	defer conn.Close()
 	client := pb.NewRestaurantsClient(conn)
 	req := &pb.UpdateRestaurant{
-		RestaurantId: 1291847688,
-		Restaurant:   nil,
+		RestaurantId: 437812006,
+		Restaurant:   &pb.CreateRestaurant{
+			Name: "ghhg",
+			Address: &pb.Address{},
+			Items: nil,
+		},
 	}
 	_, err = client.PutRestaurant(context.Background(),req)
 	if err != nil {
@@ -93,24 +95,11 @@ func TestPutRestaurant(t *testing.T) {
 	}
 }
 
-func TestDeleteRestaurant(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
-	if err != nil {
-		t.Fatalf("failed to dial: %v", err)
-	}
-	defer conn.Close()
-	client := pb.NewRestaurantsClient(conn)
-	req := &pb.RestaurantId{RestaurantId: 0}
-	_, err = client.DeleteRestaurant(context.Background(),req)
-	if err != nil {
-		t.Fatalf("Error While calling DeleteRestaurant : %v ", err)
-	}
-}
+
 
 func TestListItems(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
@@ -128,16 +117,16 @@ func TestListItems(t *testing.T) {
 }
 
 func TestGetItem(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
 	defer conn.Close()
 	client := pb.NewRestaurantsClient(conn)
 	req := &pb.ItemId{
-		ItemId:-965301954,
-		RestaurantId: -965507624,
+		ItemId:437947876,
+		RestaurantId: 437812006,
 	}
 	_, err = client.GetItem(context.Background(),req)
 	if err != nil {
@@ -147,15 +136,15 @@ func TestGetItem(t *testing.T) {
 
 
 func TestPostItem(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
 	defer conn.Close()
 	client := pb.NewRestaurantsClient(conn)
 	req := &pb.CreateItem{
-		RestaurantId: 1291847688,
+		RestaurantId: -876961234,
 		Item:&pb.CreateItemParams{
 			Name:     "Pizza",
 			Amount:   500,
@@ -170,16 +159,16 @@ func TestPostItem(t *testing.T) {
 }
 
 func TestPutItem(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
 	defer conn.Close()
 	client := pb.NewRestaurantsClient(conn)
 	req := &pb.UpdateItem{
-		ItemId:-965301954,
-		RestaurantId: -965507624,
+		ItemId:1292107078,
+		RestaurantId: 1291847688,
 		Item:&pb.CreateItemParams{
 			Name:     "Pizza",
 			Amount:   500,
@@ -195,20 +184,35 @@ func TestPutItem(t *testing.T) {
 
 
 func TestDeleteItem(t *testing.T) {
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx, "", grpc.WithContextDialer(bufDialer), grpc.WithInsecure(),)
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
 	defer conn.Close()
 	client := pb.NewRestaurantsClient(conn)
 	req := &pb.ItemId{
-		ItemId:       1,
-		RestaurantId: 1,
+		ItemId:       37872416,
+		RestaurantId: 37680746,
 	}
 	_, err = client.DeleteItem(context.Background(),req)
 	if err != nil {
 		t.Fatalf("Error While calling DeleteItem : %v ", err)
+	}
+}
+
+func TestDeleteRestaurant(t *testing.T) {
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		t.Fatalf("failed to dial: %v", err)
+	}
+	defer conn.Close()
+	client := pb.NewRestaurantsClient(conn)
+	req := &pb.RestaurantId{RestaurantId: -876961234}
+	_, err = client.DeleteRestaurant(context.Background(),req)
+	if err != nil {
+		t.Fatalf("Error While calling DeleteRestaurant : %v ", err)
 	}
 }
 
