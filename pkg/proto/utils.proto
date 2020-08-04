@@ -29,8 +29,9 @@ message ItemList {
 message Restaurant {
   int32 id = 1;
   string name = 2;
-  Address address = 3;
-  repeated Item items = 4;
+  int32 order_count = 3;
+  Address address = 4;
+  repeated Item items = 5;
 }
 
 // Restaurant without all items

@@ -68,6 +68,11 @@ func InsertOrder(tableName string, createOrder Order) (Order, error) {
 		printError(err)
 		return Order{}, nil
 	}
+	err = updateRestaurantCount("Restaurants", createOrder.Restaurant.Id)
+	if err != nil {
+		printError(err)
+		return Order{}, nil
+	}
 	return createOrder, nil
 }
 

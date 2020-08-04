@@ -12,16 +12,33 @@ func createAuthTable(tableName string) {
 
 func CreateRestaurantsTable(tableName string) error {
 	svc := createSession()
-	keys := []*dynamodb.KeySchemaElement{
+	key1 := []*dynamodb.KeySchemaElement{
 		{
 			AttributeName: aws.String("Name"),
+			KeyType: aws.String("HASH"),
+		},
+	}
+	key2 := []*dynamodb.KeySchemaElement{
+		{
+			AttributeName: aws.String("OrderCount"),
 			KeyType: aws.String("HASH"),
 		},
 	}
 	sgi := []*dynamodb.GlobalSecondaryIndex{
 		{
 			IndexName: aws.String("RName"),
-			KeySchema: keys,
+			KeySchema: key1,
+			Projection: &dynamodb.Projection{
+				ProjectionType: aws.String("ALL"),
+			},
+			ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+				ReadCapacityUnits:  aws.Int64(10),
+				WriteCapacityUnits: aws.Int64(5),
+			},
+		},
+		{
+			IndexName: aws.String("OrderCounts"),
+			KeySchema: key2,
 			Projection: &dynamodb.Projection{
 				ProjectionType: aws.String("ALL"),
 			},
@@ -42,6 +59,10 @@ func CreateRestaurantsTable(tableName string) error {
 			{
 				AttributeName: aws.String("Name"),
 				AttributeType: aws.String("S"),
+			},
+			{
+				AttributeName: aws.String("OrderCount"),
+				AttributeType: aws.String("N"),
 			},
 		},
 		KeySchema: []*dynamodb.KeySchemaElement{
@@ -127,7 +148,6 @@ func CreateItemsTable(tableName string) error {
 
 func createCustomersTable(tableName string) error {
 	svc := createSession()
-
 	ip := &dynamodb.CreateTableInput{
 		TableName: aws.String(tableName),
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{
