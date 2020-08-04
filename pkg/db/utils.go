@@ -2,12 +2,12 @@ package db
 
 import (
 	"fmt"
-	pb "github.com/jyotishp/go-orders/pkg/proto"
 )
 
 func createItem(restaurantId int32, item Item) ItemIp {
 	return ItemIp{
 		RestaurantId: restaurantId,
+		Name: item.Name,
 		ItemId: item.Id,
 		Cuisine: item.Cuisine,
 		Discount: item.Discount,
@@ -21,34 +21,6 @@ func updateItemMap(item ItemIp) ItemUp {
 		Discount: item.Discount,
 		Amount: item.Amount,
 	}
-}
-
-func extractCustomer(id int32) Customer {
-	op, _ := GetCustomer("Customers", id)
-	return op
-}
-
-func extractRestaurant(id int32) RestaurantNoItems {
-	op, _ := GetRestaurant("Restaurants", id)
-	return RestaurantNoItems{
-		Name: op.Name,
-		Id: op.Id,
-		Address: op.Address,
-	}
-}
-
-func extractItems(restaurantId int32, itemIds []int32) []Item {
-	items := make([]Item, 0)
-	for _, id := range itemIds {
-		op, err := GetItem("Items", restaurantId, id)
-		fmt.Println("ITEM -> ", op)
-		if err != nil {
-			fmt.Println("ERROR")
-			panic(err.Error())
-		}
-		items = append(items, op)
-	}
-	return items
 }
 
 func insertItems(restaurantId int32, items []Item, updateRestaurants bool) []Item {
@@ -65,28 +37,10 @@ func insertItems(restaurantId int32, items []Item, updateRestaurants bool) []Ite
 	return op
 }
 
-func pbToAddress(address *pb.Address) Address  {
-	return Address{
-		Line1: address.Line1,
-		Line2: address.Line2,
-		City: address.City,
-		State: address.State,
-	}
-}
-
 func removeCustId(customer Customer) CustomerNoId {
 	return CustomerNoId{
 		Name: customer.Name,
 		Address: customer.Address,
-	}
-}
-
-func addressToPb(address Address) *pb.Address {
-	return &pb.Address{
-		Line1: address.Line1,
-		Line2: address.Line2,
-		City:  address.City,
-		State: address.State,
 	}
 }
 
