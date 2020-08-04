@@ -16,7 +16,7 @@ import (
 )
 
 func StartGRPC(jwtSecret string, jwtTtl time.Duration) {
-	lis, err := net.Listen("tcp", "localhost:5566")
+	lis, err := net.Listen("tcp", "0.0.0.0:5566")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
@@ -112,7 +112,7 @@ func StartHTTP() {
 	fs := http.FileServer(http.Dir("swagger-ui"))
 	mux.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui", fs))
 
-	err = http.ListenAndServe("localhost:8080", mux)
+	err = http.ListenAndServe("0.0.0.0:8080", mux)
 	if err != nil {
 		log.Fatal(err)
 	}
