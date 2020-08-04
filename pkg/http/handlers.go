@@ -2,10 +2,10 @@ package http
 
 import (
 	"context"
-	"github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/jyotishp/go-orders/pkg/interceptors"
 	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/jyotishp/go-orders/pkg/interceptors"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
@@ -31,10 +31,10 @@ func StartGRPC(jwtSecret string, jwtTtl time.Duration) {
 	authServer := NewAuthServer("admin", "admin", jwtSecret, jwtTtl)
 	pb.RegisterAuthenticationServer(grpcServer, authServer)
 
-	pb.RegisterOrdersServer(grpcServer, &OrdersServer{})
-	pb.RegisterAnalysisServer(grpcServer, &AnalysisServer{})
 	pb.RegisterCustomersServer(grpcServer, &CustomerServer{})
 	pb.RegisterUtilsServer(grpcServer, &UtilsServer{})
+	pb.RegisterOrdersServer(grpcServer, &OrdersServer{})
+	pb.RegisterAnalysisServer(grpcServer, &AnalysisServer{})
 	pb.RegisterRestaurantsServer(grpcServer, &RestaurantsServer{})
 
 	grpc_prometheus.Register(grpcServer)

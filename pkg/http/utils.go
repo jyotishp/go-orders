@@ -101,56 +101,6 @@ func itemListToPb(items []db.Item) *pb.ItemList {
 		Items: itemsToPb(items),
 	}
 }
-//
-//func pbToAddress(address *pb.Address) db.Address  {
-//	return db.Address{
-//		Line1: address.Line1,
-//		Line2: address.Line2,
-//		City: address.City,
-//		State: address.State,
-//	}
-//}
-
-//func pbToItem(item *pb.Item)  db.Item {
-//	return db.Item{
-//		Id: item.Id,
-//		Name: item.Name,
-//		Cuisine: item.Cuisine,
-//		Discount: item.Discount,
-//		Amount: item.Amount,
-//	}
-//}
-//
-//func pbToItems(items []*pb.Item) []db.Item {
-//	ip := make([]db.Item, 0)
-//	for _, item := range items {
-//		ip = append(ip, pbToItem(item))
-//	}
-//	return ip
-//}
-
-//func pbToCreateOrder(order *pb.CreateOrder) db.OrderIp  {
-//	return db.OrderIp{
-//		RestaurantId: order.RestaurantId,
-//		CustomerId: order.CustomerId,
-//		Discount: order.Discount,
-//		Amount: order.Amount,
-//		PaymentMethod: order.PaymentMethod,
-//		Rating: order.Rating,
-//		Duration: order.Duration,
-//		Cuisine: order.Cuisine,
-//		Time: order.Time,
-//		Items: order.Items,
-//	}
-//}
-//
-//func pbToFilter(filter *pb.ItemsFilter) db.ItemFilter {
-//	return db.ItemFilter{
-//		RestaurantId: filter.RestaurantId,
-//		Min: filter.Min,
-//		Max: filter.Max,
-//	}
-//}
 
 func pbToCreateItem(item *pb.CreateItemParams) db.Item {
 	return db.Item{
