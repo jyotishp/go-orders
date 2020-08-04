@@ -52,15 +52,14 @@ message RestaurantId {
 message CreateRestaurant {
   string name = 1;
   Address address = 2;
-  int32 order_count = 3;
-  repeated CreateItemParams items = 4;
+  repeated CreateItemParams items = 3;
 }
 
 // Update Restaurant Params
 message UpdateRestaurantParams {
   string name = 1;
   Address address = 2;
-  repeated CreateItemParams items = 4;
+  repeated CreateItemParams items = 3;
 }
 
 // Update Restaurant

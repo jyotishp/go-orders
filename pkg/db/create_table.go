@@ -20,8 +20,12 @@ func CreateRestaurantsTable(tableName string) error {
 	}
 	key2 := []*dynamodb.KeySchemaElement{
 		{
-			AttributeName: aws.String("OrderCount"),
+			AttributeName: aws.String("Dummy"),
 			KeyType: aws.String("HASH"),
+		},
+		{
+			AttributeName: aws.String("OrderCount"),
+			KeyType: aws.String("RANGE"),
 		},
 	}
 	sgi := []*dynamodb.GlobalSecondaryIndex{
@@ -62,6 +66,10 @@ func CreateRestaurantsTable(tableName string) error {
 			},
 			{
 				AttributeName: aws.String("OrderCount"),
+				AttributeType: aws.String("N"),
+			},
+			{
+				AttributeName: aws.String("Dummy"),
 				AttributeType: aws.String("N"),
 			},
 		},

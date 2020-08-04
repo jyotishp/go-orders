@@ -52,6 +52,7 @@ type Restaurant struct {
 	OrderCount int32
 	Address Address
 	Items []Item
+	Dummy byte
 }
 
 type RestaurantNoId struct {
