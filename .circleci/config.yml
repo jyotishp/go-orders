@@ -21,12 +21,7 @@ jobs:
           name: Run tests
           command: |
             mkdir -p ~/.aws
-            cat > ~/.aws/credentials << EOF
-            [default]
-            aws_access_key_id = sometoken
-            aws_secret_access_key = sometoken
-            region = us-east-2
-            EOF
+            echo "[default]\naws_access_key_id = sometoken\naws_secret_access_key = sometoken\nregion = us-east-2" > ~/.aws/credentials
             export AWS_REGION="us-east-2"
             export DISABLE_SSL="true"
             make tests
