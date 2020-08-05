@@ -10,25 +10,6 @@ import (
 	"testing"
 )
 
-func Server() {
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	s := grpc.NewServer()
-	pb.RegisterCustomersServer(s, &CustomerServer{})
-	pb.RegisterOrdersServer(s,&OrdersServer{})
-	pb.RegisterRestaurantsServer(s,&RestaurantsServer{})
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
-}
-
-func TestMain(m *testing.M) {
-	go Server()
-	os.Exit(m.Run())
-}
-
 func TestAnalysisServer_TopRestaurants(t *testing.T) {
 	const address = "localhost:50051"
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
