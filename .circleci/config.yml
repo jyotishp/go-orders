@@ -10,7 +10,7 @@ jobs:
           name: Start DynamoDB
           command: |
             sudo apt update && sudo apt install -y default-jre default-jdk
-            curl -k -L -o dynamodb-local.tgz http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz
+            curl -k -L -o dynamodb-local.tgz https://s3.ap-south-1.amazonaws.com/dynamodb-local-mumbai/dynamodb_local_latest.tar.gz
             tar -xzf dynamodb-local.tgz
             java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
           background: true
@@ -19,6 +19,7 @@ jobs:
       - run: make build
       - run:
           name: Run tests
+          no_output_timeout: 2m
           command: |
             mkdir -p ~/.aws
             echo "[default]\naws_access_key_id = sometoken\naws_secret_access_key = sometoken\nregion = us-east-2" > ~/.aws/credentials
