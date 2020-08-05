@@ -1,3 +1,9 @@
+SHELL=/bin/bash -o pipefail
+
+GIT_COMMIT             = $(shell git rev-parse HEAD)
+
+export DOCKER_BUILDKIT = 1
+
 all: proto run
 
 install-proto:
@@ -45,5 +51,8 @@ run:
 process-data:
 	go run cmd/dataprocessing/main.go
 
-docker:
-	docker build -t go-orders .
+docker-build:
+	docker build -t store:${GIT_COMMIT} .
+
+docker: docker-build
+	docker run --rm -ti -p 8080:8080 -p 5566:5566 store:${GIT_COMMIT}
