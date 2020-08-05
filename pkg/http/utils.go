@@ -18,6 +18,7 @@ func restaurantToPb(restaurant db.Restaurant) *pb.Restaurant {
 	return &pb.Restaurant{
 		Name: restaurant.Name,
 		Id: restaurant.Id,
+		OrderCount: restaurant.OrderCount,
 		Address: addressToPb(restaurant.Address),
 		Items: itemsToPb(restaurant.Items),
 	}
@@ -205,6 +206,7 @@ func pbToUpdateOrder(order *pb.UpdateOrder) db.OrderIp {
 func pbToCreateRestaurant(restaurant *pb.CreateRestaurant) db.Restaurant {
 	return db.Restaurant{
 		Name: restaurant.Name,
+		OrderCount: 0,
 		Address: pbToAddress(restaurant.Address),
 		Items: pbToCreateItems(restaurant.Items),
 	}

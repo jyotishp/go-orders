@@ -49,25 +49,23 @@ type OrderCustomer struct {
 type Restaurant struct {
 	Id int32
 	Name string
+	OrderCount int32
 	Address Address
 	Items []Item
+	Dummy byte
 }
 
 type RestaurantNoId struct {
 	Name string `json:":n"`
+	//OrderCount int32 `json:":oc"`
 	Address Address `json:":a"`
 	Items []Item `json:":itms"`
-}
-
-type NewRestaurant struct {
-	Name string
-	Address Address
-	Items []Item
 }
 
 type RestaurantNoItems struct {
 	Id int32
 	Name string
+	OrderCount int32
 	Address Address
 }
 

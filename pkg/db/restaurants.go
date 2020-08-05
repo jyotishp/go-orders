@@ -222,6 +222,7 @@ func UpdateRestaurant(tableName string, updateRestaurant Restaurant, updateItems
 
 	op := toNormalRestaurant(newRestaurant)
 	op.Id = updateRestaurant.Id
+	op.OrderCount = updateRestaurant.OrderCount
 	fmt.Println("REACH")
 	return op, nil
 }
@@ -309,6 +310,35 @@ func DeleteRestaurant(tableName string, restaurantId int32) error {
 	}
 
 	_, err = svc.DeleteItem(input)
+	if err != nil {
+		printError(err)
+		return err
+	}
+	return nil
+}
+
+func updateRestaurantCount(tableName string, id int32) error {
+	type KeyInput struct {
+		Id int32
+	}
+
+	key, err := dynamodbattribute.MarshalMap(KeyInput{Id: id})
+	if err != nil {
+		printError(err)
+	}
+
+	ip := &dynamodb.UpdateItemInput{
+		TableName: aws.String(tableName),
+		Key: key,
+		UpdateExpression: aws.String("set OrderCount=OrderCount+:inc"),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":inc": {
+				N: aws.String(fmt.Sprint("1")),
+			},
+		},
+	}
+	svc := createSession()
+	_, err = svc.UpdateItem(ip)
 	if err != nil {
 		printError(err)
 		return err

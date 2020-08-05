@@ -55,10 +55,17 @@ message CreateRestaurant {
   repeated CreateItemParams items = 3;
 }
 
+// Update Restaurant Params
+message UpdateRestaurantParams {
+  string name = 1;
+  Address address = 2;
+  repeated CreateItemParams items = 3;
+}
+
 // Update Restaurant
 message UpdateRestaurant {
   int32 restaurant_id = 1;
-  CreateRestaurant restaurant = 2;
+  UpdateRestaurantParams restaurant = 2;
 }
 
 // List of Restaurants
