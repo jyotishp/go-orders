@@ -13,6 +13,7 @@ WORKDIR ${REPO_PATH}
 
 RUN make install-proto
 RUN make build
+RUN make fix-swagger
 
 FROM scratch as server
 COPY --from=builder /go/src/github.com/jyotishp/go-orders/server /bin/server
