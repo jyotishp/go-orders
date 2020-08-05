@@ -8,6 +8,14 @@ import (
 )
 
 func DeleteKey(tableName string, id int32) error {
+	if !checkTable(tableName) {
+		if tableName == "Customers" {
+			createCustomersTable(tableName)
+		} else if tableName == "Orders" {
+			createOrdersTable(tableName)
+		}
+	}
+
 	type KeyInput struct {
 		Id int32
 	}

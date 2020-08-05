@@ -11,6 +11,10 @@ import (
 )
 
 func GetRestaurant(tableName string, id int32) (Restaurant, error) {
+	if !checkTable(tableName) {
+		CreateRestaurantsTable(tableName)
+	}
+
 	type Input struct {
 		Id int32
 	}
@@ -48,6 +52,10 @@ func GetRestaurant(tableName string, id int32) (Restaurant, error) {
 }
 
 func GetRestaurantName(tableName string, restaurantName string) ([]Restaurant, error) {
+	if !checkTable(tableName) {
+		CreateRestaurantsTable(tableName)
+	}
+
 	filter := expression.Name("Name").Equal(expression.Value(restaurantName))
 	proj := expression.NamesList(expression.Name("Id"),
 		expression.Name("Name"), expression.Name("Address"), expression.Name("Items"))
@@ -79,6 +87,9 @@ func GetRestaurantName(tableName string, restaurantName string) ([]Restaurant, e
 }
 
 func GetRestaurantSGI(tableName string, restaurantName string) ([]Restaurant, error) {
+	if !checkTable(tableName) {
+		CreateRestaurantsTable(tableName)
+	}
 
 	svc := createSession()
 
@@ -117,6 +128,9 @@ func GetRestaurantSGI(tableName string, restaurantName string) ([]Restaurant, er
 }
 
 func InsertRestaurant(tableName string, createRestaurant Restaurant) (Restaurant, error) {
+	if !checkTable(tableName) {
+		CreateRestaurantsTable(tableName)
+	}
 
 	svc := createSession()
 
@@ -158,6 +172,9 @@ func InsertRestaurant(tableName string, createRestaurant Restaurant) (Restaurant
 }
 
 func UpdateRestaurant(tableName string, updateRestaurant Restaurant, updateItems bool) (Restaurant, error) {
+	if !checkTable(tableName) {
+		CreateRestaurantsTable(tableName)
+	}
 
 	type KeyInput struct {
 		Id int32
@@ -210,6 +227,9 @@ func UpdateRestaurant(tableName string, updateRestaurant Restaurant, updateItems
 }
 
 func GetAllItems(tableName string, filter *pb.ItemsFilter) ([]Item, error) {
+	if !checkTable(tableName) {
+		CreateRestaurantsTable(tableName)
+	}
 
 	items := make([]Item, 0)
 	restaurant, err := GetRestaurant(tableName, filter.RestaurantId)

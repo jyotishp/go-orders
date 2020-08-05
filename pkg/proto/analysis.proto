@@ -2,29 +2,8 @@ syntax = "proto3";
 package protos;
 option go_package="pkg/proto";
 import "google/api/annotations.proto";
-import "customer.proto";
 import "restaurant.proto";
 import "utils.proto";
-
-
-// Cuisines per state
-message StateCuisines {
-  // List of cuisines
-  message CuisineList {
-    repeated string cuisine = 1;
-  }
-  map<string, CuisineList> states = 1;
-}
-
-// Customers per cuisine
-message CuisineCustomers {
-  map<string, CustomerList> cuisines = 1;
-}
-
-// Cuisine
-message Cuisine {
-  string name = 1;
-}
 
 service Analysis {
 
@@ -39,27 +18,6 @@ service Analysis {
   rpc WorstRestaurants(Quantity) returns (RestaurantList) {
     option (google.api.http) = {
       get: "/v1/analysis/restaurants/worst/{size}"
-    };
-  }
-
-  // Get the most ordered cuisines for states
-  rpc TopStateCuisines(Quantity) returns (StateCuisines) {
-    option (google.api.http) = {
-      get: "/v1/analysis/state/cuisines/top/{size}"
-    };
-  }
-
-  // Get the least ordered cuisines for states
-  rpc WorstStateCuisines(Quantity) returns (StateCuisines) {
-    option (google.api.http) = {
-      get: "/v1/analysis/state/cuisines/worst/{size}"
-    };
-  }
-
-  // Get the customer base for cuisines
-  rpc CuisineCustomerMap(Cuisine) returns (CuisineCustomers) {
-    option (google.api.http) = {
-      get: "/v1/analysis/cuisines-demographics/{name}"
     };
   }
 }

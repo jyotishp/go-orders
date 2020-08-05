@@ -9,6 +9,9 @@ import (
 )
 
 func GetItem(tableName string, restaurantId int32, itemId int32) (Item, error) {
+	if !checkTable(tableName) {
+		CreateItemsTable(tableName)
+	}
 	type Input struct {
 		ItemId int32
 		RestaurantId int32
@@ -44,6 +47,10 @@ func GetItem(tableName string, restaurantId int32, itemId int32) (Item, error) {
 }
 
 func InsertItem(tableName string, restaurantId int32, item Item, updateRestaurants bool) (Item ,error) {
+	if !checkTable(tableName) {
+		CreateItemsTable(tableName)
+	}
+
 	uid, err := uuid.NewUUID()
 	if err != nil {
 		printError(err)
@@ -86,6 +93,10 @@ func InsertItem(tableName string, restaurantId int32, item Item, updateRestauran
 }
 
 func UpdateItem(tableName string, restaurantId int32, item Item) (Item, error) {
+	if !checkTable(tableName) {
+		CreateItemsTable(tableName)
+	}
+
 	type KeyInput struct {
 		RestaurantId int32
 		ItemId int32
@@ -133,6 +144,10 @@ func UpdateItem(tableName string, restaurantId int32, item Item) (Item, error) {
 }
 
 func DeleteItem(tableName string, restaurantId, itemId int32) error {
+	if !checkTable(tableName) {
+		CreateItemsTable(tableName)
+	}
+
 	type KeyInput struct {
 		RestaurantId, ItemId int32
 	}

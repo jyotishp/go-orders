@@ -9,6 +9,11 @@ import (
 )
 
 func GetCustomer(tableName string, id int32) (Customer, error) {
+
+	if !checkTable(tableName) {
+		createCustomersTable(tableName)
+	}
+
 	type Input struct {
 		Id int32
 	}
@@ -46,6 +51,10 @@ func GetCustomer(tableName string, id int32) (Customer, error) {
 }
 
 func InsertCustomer(tableName string, createCustomer Customer) (Customer, error) {
+	if !checkTable(tableName) {
+		createCustomersTable(tableName)
+	}
+
 	uid, err := uuid.NewUUID()
 	if err != nil {
 		printError(err)
@@ -75,6 +84,10 @@ func InsertCustomer(tableName string, createCustomer Customer) (Customer, error)
 }
 
 func UpdateCustomer(tableName string, updateCustomer Customer) (Customer, error) {
+	if !checkTable(tableName) {
+		createCustomersTable(tableName)
+	}
+
 	type KeyInput struct {
 		Id int32
 	}
@@ -132,6 +145,10 @@ func UpdateCustomer(tableName string, updateCustomer Customer) (Customer, error)
 }
 
 func GetAllCustomers(tableName string) ([]Customer, error) {
+	if !checkTable(tableName) {
+		createCustomersTable(tableName)
+	}
+
 	ip := &dynamodb.ScanInput{
 		TableName: aws.String(tableName),
 	}

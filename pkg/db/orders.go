@@ -8,6 +8,10 @@ import (
 )
 
 func GetOrder(tableName string, id int32) (Order, error) {
+	if !checkTable(tableName) {
+		createOrdersTable(tableName)
+	}
+
 	type Input struct {
 		Id int32
 	}
@@ -43,6 +47,10 @@ func GetOrder(tableName string, id int32) (Order, error) {
 }
 
 func InsertOrder(tableName string, createOrder Order) (Order, error) {
+	if !checkTable(tableName) {
+		createOrdersTable(tableName)
+	}
+
 	uid, err := uuid.NewUUID()
 	if err != nil {
 		printError(err)
@@ -72,6 +80,10 @@ func InsertOrder(tableName string, createOrder Order) (Order, error) {
 }
 
 func UpdateOrder(tableName string, updateOrder OrderIp) (Order, error) {
+	if !checkTable(tableName) {
+		createOrdersTable(tableName)
+	}
+
 	type KeyInput struct {
 		Id int32
 	}

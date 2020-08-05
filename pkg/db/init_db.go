@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"os"
 )
 
 func printError(err error) {
@@ -31,8 +32,7 @@ func printError(err error) {
 func createSession() *dynamodb.DynamoDB {
 
 	sess := session.Must(session.NewSession(&aws.Config{
-		Endpoint: aws.String("http://localhost:8000"),
-		Region: aws.String("Mumbai"),
+		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
 	}))
 
 	return dynamodb.New(sess)
