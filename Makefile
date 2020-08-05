@@ -39,7 +39,7 @@ tests:
 	go tool cover -html=c.out -o coverage.html
 
 fix-swagger:
-	cat build/app.swagger.json | jq -r | sed 's/"title":".*\.proto"/"title":"Store"/g' > build/swagger.json && \
+	cat build/app.swagger.json | jq | sed 's/"title":".*\.proto"/"title":"Store"/g' > build/swagger.json && \
     mv build/swagger.json swagger-ui/app.swagger.json && \
     rm -f build/swagger.json
 
