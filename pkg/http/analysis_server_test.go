@@ -37,7 +37,7 @@ func TestAnalysisServer_WorstRestaurants(t *testing.T) {
 	req := &pb.Quantity{
 		Size: 5,
 	}
-	_, err = client.TopRestaurants(context.Background(), req)
+	_, err = client.WorstRestaurants(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Error in Testing Top Restaurants : #{err}")
 	}

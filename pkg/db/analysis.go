@@ -9,6 +9,9 @@ import (
 
 // GetTopRestaurants gets 'size' number of top restaurants from the db using order count as the only metric.
 func GetTopRestaurants(tableName string, size int32) ([]Restaurant, error) {
+	if !checkTable(tableName) {
+		CreateRestaurantsTable(tableName)
+	}
 	ip := &dynamodb.QueryInput{
 		TableName: aws.String(tableName),
 		KeyConditionExpression: aws.String("Dummy=:z"),
@@ -42,6 +45,9 @@ func GetTopRestaurants(tableName string, size int32) ([]Restaurant, error) {
 
 // GetWorstRestaurants gets 'size' number of worst restaurants from the db using order count as the only metric.
 func GetWorstRestaurants(tableName string, size int32) ([]Restaurant, error) {
+	if !checkTable(tableName) {
+		CreateRestaurantsTable(tableName)
+	}
 	ip := &dynamodb.QueryInput{
 		TableName: aws.String(tableName),
 		KeyConditionExpression: aws.String("Dummy=:z"),
