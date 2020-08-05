@@ -84,3 +84,7 @@ HTTP Verb | Route | Description
 ### End User Context Diagram
 ![Screenshot](assets/context_diagram.png)
 
+### Architecture Diagram
+![Screenshot](assets/pipelines.png)
+
+
