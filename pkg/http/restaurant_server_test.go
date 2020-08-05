@@ -1,4 +1,4 @@
-package http
+package http_test
 
 import (
 	"context"
@@ -6,19 +6,6 @@ import (
 	"google.golang.org/grpc"
 	"testing"
 )
-
-
-//func init() {
-//	lis = bufconn.Listen(bufSize)
-//	s := grpc.NewServer()
-//	pb.RegisterRestaurantsServer(s,&RestaurantsServer{})
-//
-//	go func() {
-//		if err := s.Serve(lis); err != nil {
-//			log.Fatalf("Server exited with error: %v", err)
-//		}
-//	}()
-//}
 
 var rest_id int32
 var rest_name string
@@ -117,7 +104,7 @@ func TestPutRestaurant(t *testing.T) {
 	client := pb.NewRestaurantsClient(conn)
 	req := &pb.UpdateRestaurant{
 		RestaurantId: rest_id,
-		Restaurant:   &pb.CreateRestaurant{
+		Restaurant:   &pb.UpdateRestaurantParams{
 			Name: "Mughlai",
 			Address: &pb.Address{},
 			Items: nil,
@@ -224,7 +211,15 @@ func TestDeleteRestaurant(t *testing.T) {
 	}
 	defer conn.Close()
 	client := pb.NewRestaurantsClient(conn)
-	req := &pb.RestaurantId{RestaurantId: rest_id}
+
+	createRestReq := &pb.CreateRestaurant{
+		Name:    "xyz",
+		Address: &pb.Address{},
+		Items:   nil,
+	}
+	rest, err := client.PostRestaurant(context.Background(), createRestReq)
+
+	req := &pb.RestaurantId{RestaurantId: rest.Id}
 	_, err = client.DeleteRestaurant(context.Background(),req)
 	if err != nil {
 		t.Fatalf("Error While calling DeleteRestaurant : %v ", err)

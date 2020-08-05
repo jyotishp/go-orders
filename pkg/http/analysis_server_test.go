@@ -1,4 +1,4 @@
-package http
+package http_test
 
 import (
 	pb "github.com/jyotishp/go-orders/pkg/proto"

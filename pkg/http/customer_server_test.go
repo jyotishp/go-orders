@@ -1,7 +1,8 @@
-package http
+package http_test
 
 import (
 	"context"
+	"github.com/jyotishp/go-orders/pkg/http"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 	"google.golang.org/grpc"
 	"log"
@@ -9,18 +10,6 @@ import (
 	"os"
 	"testing"
 )
-
-//func init() {
-//	lis = bufconn.Listen(bufSize)
-//	s := grpc.NewServer()
-//	pb.RegisterCustomersServer(s, &CustomerServer{})
-//
-//	go func() {
-//		if err := s.Serve(lis); err != nil {
-//			log.Fatalf("Server exited with error: %v", err)
-//		}
-//	}()
-//}
 
 var cust_id int32
 
@@ -36,11 +25,11 @@ func Server() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterCustomersServer(s, &CustomerServer{})
-	pb.RegisterOrdersServer(s,&OrdersServer{})
-	pb.RegisterRestaurantsServer(s,&RestaurantsServer{})
-	pb.RegisterUtilsServer(s, &UtilsServer{})
-	pb.RegisterAnalysisServer(s, &AnalysisServer{})
+	pb.RegisterCustomersServer(s, &http.CustomerServer{})
+	pb.RegisterOrdersServer(s,&http.OrdersServer{})
+	pb.RegisterRestaurantsServer(s,&http.RestaurantsServer{})
+	pb.RegisterUtilsServer(s, &http.UtilsServer{})
+	pb.RegisterAnalysisServer(s, &http.AnalysisServer{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

@@ -1,7 +1,8 @@
-package http
+package http_test
 
 import (
 	"context"
+	"github.com/jyotishp/go-orders/pkg/http"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
@@ -24,7 +25,7 @@ var lis *bufconn.Listener
 func init() {
 	lis = bufconn.Listen(bufSize)
 	s := grpc.NewServer()
-	pb.RegisterAuthenticationServer(s, NewAuthServer(username, password, secret, ttl))
+	pb.RegisterAuthenticationServer(s, http.NewAuthServer(username, password, secret, ttl))
 	go func() {
 		if err := s.Serve(lis); err != nil {
 			log.Fatalf("Server exited with error: %v", err)
@@ -37,7 +38,7 @@ func bufDialer(context.Context, string) (net.Conn, error) {
 }
 
 func TestNewAuthServer(t *testing.T) {
-	server := NewAuthServer(username, password, secret, ttl)
+	server := http.NewAuthServer(username, password, secret, ttl)
 
 	if server.AdminUsername != username {
 		t.Errorf("username mismatch")
