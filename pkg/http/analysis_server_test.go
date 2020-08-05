@@ -4,11 +4,10 @@ import (
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"log"
-	"net"
-	"os"
+
 	"testing"
 )
+
 
 func TestAnalysisServer_TopRestaurants(t *testing.T) {
 	const address = "localhost:50051"
@@ -21,7 +20,7 @@ func TestAnalysisServer_TopRestaurants(t *testing.T) {
 	req := &pb.Quantity{
 		Size: 5,
 	}
-	_, err := client.TopRestaurants(context.Background(), req)
+	_, err = client.TopRestaurants(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Error in Testing Top Restaurants : #{err}")
 	}
@@ -38,7 +37,7 @@ func TestAnalysisServer_WorstRestaurants(t *testing.T) {
 	req := &pb.Quantity{
 		Size: 5,
 	}
-	_, err := client.TopRestaurants(context.Background(), req)
+	_, err = client.TopRestaurants(context.Background(), req)
 	if err != nil {
 		t.Fatalf("Error in Testing Top Restaurants : #{err}")
 	}
