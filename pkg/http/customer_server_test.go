@@ -39,6 +39,8 @@ func Server() {
 	pb.RegisterCustomersServer(s, &CustomerServer{})
 	pb.RegisterOrdersServer(s,&OrdersServer{})
 	pb.RegisterRestaurantsServer(s,&RestaurantsServer{})
+	pb.RegisterUtilsServer(s, &UtilsServer{})
+	pb.RegisterAnalysisServer(s, &AnalysisServer{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
