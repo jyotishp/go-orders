@@ -20,26 +20,7 @@ import (
 //	}()
 //}
 
-
-
-
-
-func TestGetOrder(t *testing.T) {
-	const address = "localhost:50051"
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		t.Fatalf("failed to dial: %v", err)
-	}
-	defer conn.Close()
-	client := pb.NewOrdersClient(conn)
-	req := &pb.OrderId{
-		OrderId:int32(-10390236),
-	}
-	_, err = client.GetOrder(context.Background(),req)
-	if err != nil {
-		t.Fatalf("Error While calling GetOrder : %v ", err)
-	}
-}
+var order_id int32
 
 func TestPostOrder(t *testing.T) {
 	const address = "localhost:50051"
@@ -61,11 +42,34 @@ func TestPostOrder(t *testing.T) {
 		Time:          0,
 		Items:         nil,
 	}
-	_, err = client.PostOrder(context.Background(),req)
+	res, err := client.PostOrder(context.Background(),req)
 	if err != nil {
 		t.Fatalf("Error While calling PostOrder : %v ", err)
+	} else{
+		order_id = res.Id
 	}
 }
+
+
+
+func TestGetOrder(t *testing.T) {
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		t.Fatalf("failed to dial: %v", err)
+	}
+	defer conn.Close()
+	client := pb.NewOrdersClient(conn)
+	req := &pb.OrderId{
+		OrderId:int32(order_id),
+	}
+	_, err = client.GetOrder(context.Background(),req)
+	if err != nil {
+		t.Fatalf("Error While calling GetOrder : %v ", err)
+	}
+}
+
+
 
 
 func TestPutOrder(t *testing.T) {
@@ -77,7 +81,7 @@ func TestPutOrder(t *testing.T) {
 	defer conn.Close()
 	client := pb.NewOrdersClient(conn)
 	req := &pb.UpdateOrder{
-		OrderId: 0,
+		OrderId: order_id,
 		Order:   &pb.CreateOrder{
 			RestaurantId:  0,
 			CustomerId:    0,
@@ -108,7 +112,7 @@ func TestDeleteOrder(t *testing.T) {
 	defer conn.Close()
 	client := pb.NewOrdersClient(conn)
 	req := &pb.OrderId{
-		OrderId: 0,
+		OrderId: order_id,
 	}
 	_, err = client.DeleteOrder(context.Background(),req)
 	if err != nil {
