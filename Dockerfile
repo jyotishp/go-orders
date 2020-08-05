@@ -19,7 +19,7 @@ RUN echo "[default]\naws_access_key_id = dummy\naws_secret_access_key = dummy\nr
 FROM scratch as server
 COPY --from=builder /go/src/github.com/jyotishp/go-orders/server /bin/server
 COPY --from=builder /go/src/github.com/jyotishp/go-orders/swagger-ui /opt/swagger-ui
-COPY --from=builder /go/src/github.com/jyotishp/go-orders/credentials /root/.aws/credentials
+COPY assets/.aws /root/.aws
 WORKDIR /opt
 CMD ["/bin/server"]
 
