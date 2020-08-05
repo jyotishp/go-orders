@@ -6,10 +6,19 @@ jobs:
     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
       - checkout
+      - run:
+          command: |
+            sudo apt update && sudo apt install -y default-jre default-jdk
+            curl -k -L -o dynamodb-local.tgz http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz
+            tar -xzf dynamodb-local.tgz
+            java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
+          background: true
+      - run: sleep 60
       - run: make install-proto
       - run: make build
       - run:
           command: |
+            export AWS_REGION="us-east-2"
             make tests
             mv coverage.html /tmp/artifacts
       - store_artifacts:

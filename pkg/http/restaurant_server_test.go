@@ -203,26 +203,26 @@ func TestDeleteItem(t *testing.T) {
 	}
 }
 
-func TestDeleteRestaurant(t *testing.T) {
-	const address = "localhost:50051"
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		t.Fatalf("failed to dial: %v", err)
-	}
-	defer conn.Close()
-	client := pb.NewRestaurantsClient(conn)
-
-	createRestReq := &pb.CreateRestaurant{
-		Name:    "xyz",
-		Address: &pb.Address{},
-		Items:   nil,
-	}
-	rest, err := client.PostRestaurant(context.Background(), createRestReq)
-
-	req := &pb.RestaurantId{RestaurantId: rest.Id}
-	_, err = client.DeleteRestaurant(context.Background(),req)
-	if err != nil {
-		t.Fatalf("Error While calling DeleteRestaurant : %v ", err)
-	}
-}
+//func TestDeleteRestaurant(t *testing.T) {
+//	const address = "localhost:50051"
+//	conn, err := grpc.Dial(address, grpc.WithInsecure())
+//	if err != nil {
+//		t.Fatalf("failed to dial: %v", err)
+//	}
+//	defer conn.Close()
+//	client := pb.NewRestaurantsClient(conn)
+//
+//	createRestReq := &pb.CreateRestaurant{
+//		Name:    "xyz",
+//		Address: &pb.Address{},
+//		Items:   nil,
+//	}
+//	rest, err := client.PostRestaurant(context.Background(), createRestReq)
+//
+//	req := &pb.RestaurantId{RestaurantId: rest.Id}
+//	_, err = client.DeleteRestaurant(context.Background(),req)
+//	if err != nil {
+//		t.Fatalf("Error While calling DeleteRestaurant : %v ", err)
+//	}
+//}
 
