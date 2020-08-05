@@ -6,7 +6,7 @@ import "utils.proto";
 
 // Get Customer Request
 message CustomerId {
-  int32 customer_id = 1;
+  string customer_id = 1;
 }
 
 // List of customers
@@ -22,7 +22,7 @@ message CreateCustomer {
 
 // Update customer
 message UpdateCustomer {
-  int32 customer_id = 1;
+  string customer_id = 1;
   CreateCustomer customer = 2;
 }
 

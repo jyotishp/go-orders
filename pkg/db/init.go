@@ -2,12 +2,28 @@ package db
 
 import (
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+	"log"
 )
 
+// Create DynamoDB service
+func CreateDbService() *dynamodb.DynamoDB {
+	return NewDbSession()
+}
+
+// Initialize the database
+// Create new DynamoDB service and initializes the tables
+func InitDb(svc dynamodbiface.DynamoDBAPI) {
+	log.Printf("initializing db...")
+	printError(CreateTableIfNotExists(svc, OrdersTableSchema()))
+	printError(CreateTableIfNotExists(svc, RestaurantsTableSchema()))
+	printError(CreateTableIfNotExists(svc, CustomersTableSchema()))
+	printError(CreateTableIfNotExists(svc, ItemsTableSchema()))
+}
+
+// Print the error encountered during DB operations
 func printError(err error) {
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
@@ -25,37 +41,5 @@ func printError(err error) {
 			fmt.Println(err.Error())
 		}
 		return
-	}
-}
-
-func createSession() *dynamodb.DynamoDB {
-
-	sess := session.Must(session.NewSession(&aws.Config{
-		Endpoint: aws.String("http://localhost:8000"),
-		Region: aws.String("Mumbai"),
-	}))
-
-	return dynamodb.New(sess)
-}
-
-func checkTable(tableName string) bool  {
-
-	svc := createSession()
-
-	input := &dynamodb.ListTablesInput{}
-
-	for {
-		result, err := svc.ListTables(input)
-		if err != nil {
-			printError(err)
-			return false
-		}
-
-		for _, table := range result.TableNames {
-			if *table == tableName {
-				return true
-			}
-		}
-		return false
 	}
 }
