@@ -22,9 +22,13 @@ import (
 //	}()
 //}
 
+var cust_id int32
+
 var (
 	port = ":50051"
 )
+
+
 
 func Server() {
 	lis, err := net.Listen("tcp", port)
@@ -45,6 +49,42 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+func TestPostCustomer(t *testing.T) {
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		t.Fatalf("failed to dial: %v", err)
+	}
+	defer conn.Close()
+	client := pb.NewCustomersClient(conn)
+	req := &pb.CreateCustomer{
+		Name:    "mnq",
+		Address: &pb.Address{},
+	}
+	res, err := client.PostCustomer(context.Background(),req)
+	if err != nil {
+		t.Fatalf("Error While calling PostCustomer : %v ", err)
+	}else {
+		cust_id = res.Id
+	}
+}
+
+func TestGetCustomer(t *testing.T) {
+	id := cust_id
+	const address = "localhost:50051"
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		t.Fatalf("failed to dial: %v", err)
+	}
+	defer conn.Close()
+	client := pb.NewCustomersClient(conn)
+	req := &pb.CustomerId{CustomerId: int32(id)}
+	_, err = client.GetCustomer(context.Background(),req )
+	if err != nil {
+		t.Fatalf("Error While calling GetCustomers : %v ", err)
+	}
+}
+
 
 func TestListCustomer(t *testing.T) {
 	const address = "localhost:50051"
@@ -61,42 +101,6 @@ func TestListCustomer(t *testing.T) {
 	}
 }
 
-func TestGetCustomer(t *testing.T) {
-	id := -1166859842
-	const address = "localhost:50051"
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		t.Fatalf("failed to dial: %v", err)
-	}
-	defer conn.Close()
-	client := pb.NewCustomersClient(conn)
-	req := &pb.CustomerId{CustomerId: int32(id)}
-	_, err = client.GetCustomer(context.Background(),req )
-	if err != nil {
-		t.Fatalf("Error While calling GetCustomers : %v ", err)
-	}
-}
-
-
-
-func TestPostCustomer(t *testing.T) {
-	const address = "localhost:50051"
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		t.Fatalf("failed to dial: %v", err)
-	}
-	defer conn.Close()
-	client := pb.NewCustomersClient(conn)
-	req := &pb.CreateCustomer{
-		Name:    "mnq",
-		Address: &pb.Address{},
-	}
-	_, err = client.PostCustomer(context.Background(),req)
-	if err != nil {
-		t.Fatalf("Error While calling PostCustomer : %v ", err)
-	}
-}
-
 
 func TestPutCustomer(t *testing.T) {
 	const address = "localhost:50051"
@@ -107,7 +111,7 @@ func TestPutCustomer(t *testing.T) {
 	defer conn.Close()
 	client := pb.NewCustomersClient(conn)
 	req := &pb.UpdateCustomer{
-		CustomerId: -424548410,
+		CustomerId: cust_id,
 		Customer:&pb.CreateCustomer{
 			Name: "pyz",
 			Address: &pb.Address{},
@@ -129,7 +133,7 @@ func TestDeleteCustomer(t *testing.T) {
 	defer conn.Close()
 	client := pb.NewCustomersClient(conn)
 	req := &pb.CustomerId{
-		CustomerId: 1707272642,
+		CustomerId: cust_id,
 	}
 	_, err = client.DeleteCustomer(context.Background(), req )
 	if err != nil {
