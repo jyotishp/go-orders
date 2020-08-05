@@ -7,6 +7,7 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Start DynamoDB
           command: |
             sudo apt update && sudo apt install -y default-jre default-jdk
             curl -k -L -o dynamodb-local.tgz http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz
@@ -17,8 +18,10 @@ jobs:
       - run: make install-proto
       - run: make build
       - run:
+          name: Run tests
           command: |
             export AWS_REGION="us-east-2"
+            export DISABLE_SSL="true"
             make tests
             mv coverage.html /tmp/artifacts
       - store_artifacts:

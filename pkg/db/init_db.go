@@ -29,10 +29,19 @@ func printError(err error) {
 	}
 }
 
+func DisableSSL() bool {
+	res := os.Getenv("DISABLE_SSL")
+	if len(res) == 0 {
+		return false
+	}
+	return true
+}
+
 func createSession() *dynamodb.DynamoDB {
 
 	sess := session.Must(session.NewSession(&aws.Config{
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
+		DisableSSL: aws.Bool(DisableSSL()),
 	}))
 
 	return dynamodb.New(sess)
