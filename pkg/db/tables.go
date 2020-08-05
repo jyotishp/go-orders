@@ -16,40 +16,54 @@ var (
 	ItemsTable = "Items"
 
 	// Keys
-	orderId          = &dynamodb.KeySchemaElement{AttributeName: aws.String("OrderId"), KeyType: aws.String("HASH")}
-	restaurantId     = &dynamodb.KeySchemaElement{AttributeName: aws.String("RestaurantId"), KeyType: aws.String("HASH")}
-	customerId       = &dynamodb.KeySchemaElement{AttributeName: aws.String("CustomerId"), KeyType: aws.String("HASH")}
-	itemId           = &dynamodb.KeySchemaElement{AttributeName: aws.String("ItemId"), KeyType: aws.String("HASH")}
-	cuisine          = &dynamodb.KeySchemaElement{AttributeName: aws.String("Cuisine"), KeyType: aws.String("RANGE")}
-	state            = &dynamodb.KeySchemaElement{AttributeName: aws.String("State"), KeyType: aws.String("RANGE")}
+	orderId          = &dynamodb.KeySchemaElement{AttributeName: aws.String("order_id"), KeyType: aws.String("HASH")}
+	restaurantId     = &dynamodb.KeySchemaElement{AttributeName: aws.String("restaurant_id"), KeyType: aws.String("HASH")}
+	customerId       = &dynamodb.KeySchemaElement{AttributeName: aws.String("customer_id"), KeyType: aws.String("HASH")}
+	itemId           = &dynamodb.KeySchemaElement{AttributeName: aws.String("item_id"), KeyType: aws.String("HASH")}
+	cuisine          = &dynamodb.KeySchemaElement{AttributeName: aws.String("cuisine"), KeyType: aws.String("RANGE")}
+	state            = &dynamodb.KeySchemaElement{AttributeName: aws.String("state"), KeyType: aws.String("RANGE")}
 
 	// Attributes
-	orderIdAttr      = &dynamodb.AttributeDefinition{AttributeName: aws.String("OrderId"), AttributeType: aws.String("S")}
-	restaurantIdAttr = &dynamodb.AttributeDefinition{AttributeName: aws.String("RestaurantId"), AttributeType: aws.String("S")}
-	customerIdAttr   = &dynamodb.AttributeDefinition{AttributeName: aws.String("CustomerId"), AttributeType: aws.String("S")}
-	itemIdAttr       = &dynamodb.AttributeDefinition{AttributeName: aws.String("ItemId"), AttributeType: aws.String("S")}
-	stateAttr        = &dynamodb.AttributeDefinition{AttributeName: aws.String("State"), AttributeType: aws.String("S")}
-	cuisineAttr      = &dynamodb.AttributeDefinition{AttributeName: aws.String("Cuisine"), AttributeType: aws.String("S")}
+	orderIdAttr      = &dynamodb.AttributeDefinition{AttributeName: aws.String("order_id"), AttributeType: aws.String("S")}
+	restaurantIdAttr = &dynamodb.AttributeDefinition{AttributeName: aws.String("restaurant_id"), AttributeType: aws.String("S")}
+	customerIdAttr   = &dynamodb.AttributeDefinition{AttributeName: aws.String("customer_id"), AttributeType: aws.String("S")}
+	itemIdAttr       = &dynamodb.AttributeDefinition{AttributeName: aws.String("item_id"), AttributeType: aws.String("S")}
+	stateAttr        = &dynamodb.AttributeDefinition{AttributeName: aws.String("state"), AttributeType: aws.String("S")}
+	cuisineAttr      = &dynamodb.AttributeDefinition{AttributeName: aws.String("cuisine"), AttributeType: aws.String("S")}
 )
 
 // Schema for orders table
 func OrdersTableSchema() *dynamodb.CreateTableInput {
 	table := &dynamodb.CreateTableInput{
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{
-			orderIdAttr, restaurantIdAttr, customerIdAttr, stateAttr,
+			orderIdAttr, restaurantIdAttr, customerIdAttr,
 		},
 		KeySchema: []*dynamodb.KeySchemaElement{orderId},
-		LocalSecondaryIndexes: []*dynamodb.LocalSecondaryIndex{
+		GlobalSecondaryIndexes: []*dynamodb.GlobalSecondaryIndex{
 			{
 				IndexName: restaurantId.AttributeName,
-				KeySchema: []*dynamodb.KeySchemaElement{restaurantId, state},
+				KeySchema: []*dynamodb.KeySchemaElement{restaurantId},
+				Projection: &dynamodb.Projection{ProjectionType: aws.String("ALL")},
+				ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+					ReadCapacityUnits:  aws.Int64(10),
+					WriteCapacityUnits: aws.Int64(10),
+				},
 			},
 			{
 				IndexName: customerId.AttributeName,
-				KeySchema: []*dynamodb.KeySchemaElement{customerId, state},
+				KeySchema: []*dynamodb.KeySchemaElement{customerId},
+				Projection: &dynamodb.Projection{ProjectionType: aws.String("ALL")},
+				ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+					ReadCapacityUnits:  aws.Int64(10),
+					WriteCapacityUnits: aws.Int64(10),
+				},
 			},
 		},
-		TableName: aws.String(ordersTable),
+		TableName: aws.String(OrdersTable),
+		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+			ReadCapacityUnits:  aws.Int64(10),
+			WriteCapacityUnits: aws.Int64(10),
+		},
 	}
 	return table
 }
@@ -57,9 +71,13 @@ func OrdersTableSchema() *dynamodb.CreateTableInput {
 // Schema for customers table
 func CustomersTableSchema() *dynamodb.CreateTableInput {
 	table := &dynamodb.CreateTableInput{
-		AttributeDefinitions: []*dynamodb.AttributeDefinition{restaurantIdAttr, stateAttr},
+		AttributeDefinitions: []*dynamodb.AttributeDefinition{customerIdAttr},
 		KeySchema:            []*dynamodb.KeySchemaElement{customerId},
-		TableName:            aws.String(customersTable),
+		TableName:            aws.String(CustomersTable),
+		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+			ReadCapacityUnits:  aws.Int64(10),
+			WriteCapacityUnits: aws.Int64(10),
+		},
 	}
 	return table
 }
@@ -67,9 +85,13 @@ func CustomersTableSchema() *dynamodb.CreateTableInput {
 // Schema for restaurants table
 func RestaurantsTableSchema() *dynamodb.CreateTableInput {
 	table := &dynamodb.CreateTableInput{
-		AttributeDefinitions: []*dynamodb.AttributeDefinition{restaurantIdAttr, stateAttr},
+		AttributeDefinitions: []*dynamodb.AttributeDefinition{restaurantIdAttr},
 		KeySchema:            []*dynamodb.KeySchemaElement{restaurantId},
-		TableName:            aws.String(restaurantsTable),
+		TableName:            aws.String(RestaurantsTable),
+		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+			ReadCapacityUnits:  aws.Int64(10),
+			WriteCapacityUnits: aws.Int64(10),
+		},
 	}
 	return table
 }
@@ -79,7 +101,11 @@ func ItemsTableSchema() *dynamodb.CreateTableInput {
 	table := &dynamodb.CreateTableInput{
 		AttributeDefinitions: []*dynamodb.AttributeDefinition{itemIdAttr, cuisineAttr},
 		KeySchema:            []*dynamodb.KeySchemaElement{itemId, cuisine},
-		TableName:            aws.String(itemsTable),
+		TableName:            aws.String(ItemsTable),
+		ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
+			ReadCapacityUnits:  aws.Int64(10),
+			WriteCapacityUnits: aws.Int64(10),
+		},
 	}
 	return table
 }
@@ -96,6 +122,7 @@ func CreateTable(svc dynamodbiface.DynamoDBAPI, table *dynamodb.CreateTableInput
 
 // Check if the given table exists
 func TableExists(svc dynamodbiface.DynamoDBAPI, table string) bool {
+	log.Printf("checking if table %v exists", table)
 	_, err := svc.DescribeTable(&dynamodb.DescribeTableInput{TableName: aws.String(table)})
 	if err != nil {
 		return false
@@ -106,6 +133,7 @@ func TableExists(svc dynamodbiface.DynamoDBAPI, table string) bool {
 // Create a table if it doesn't exist
 func CreateTableIfNotExists(svc dynamodbiface.DynamoDBAPI, table *dynamodb.CreateTableInput) error {
 	if !TableExists(svc, *table.TableName) {
+		log.Printf("creating table: %v", *table.TableName)
 		return CreateTable(svc, table)
 	}
 	return nil

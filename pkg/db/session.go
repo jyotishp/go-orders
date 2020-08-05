@@ -9,9 +9,10 @@ import (
 
 // Create a new AWS session
 func NewDbSession() *dynamodb.DynamoDB {
-    dbEndpoint := GetEnv("DB_ENDPOINT", "localhost:8080")
+    dbEndpoint := GetEnv("DB_ENDPOINT", "localhost:8000")
     session, err := session.NewSession(&aws.Config{
         Endpoint: aws.String(dbEndpoint),
+        DisableSSL: aws.Bool(true),
     })
     if err != nil {
         log.Fatalf("failed to create new session: %v", err)

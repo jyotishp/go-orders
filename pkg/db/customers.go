@@ -5,152 +5,99 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
 	"github.com/google/uuid"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
+	"log"
 )
 
-func GetCustomer(tableName string, id int32) (Customer, error) {
-	type Input struct {
-		Id int32
-	}
-
-	key, err := dynamodbattribute.MarshalMap(Input{Id: id})
+// Create a new customer entity and add it to the database
+func AddCustomer(svc dynamodbiface.DynamoDBAPI, c *pb.CreateCustomer) (*pb.Customer, error) {
+	id, err := uuid.NewUUID()
 	if err != nil {
-		printError(err)
-		return Customer{}, err
+		return nil, fmt.Errorf("failed create new uuid: %v", err)
 	}
-
-	ip := &dynamodb.GetItemInput{
-		TableName: aws.String(tableName),
-		Key: key,
+	customer := &pb.Customer{
+		CustomerId:      id.String(),
+		Name:    c.Name,
+		Address: c.Address,
 	}
-
-	svc := createSession()
-
-	res, err := svc.GetItem(ip)
+	log.Printf("%v", customer)
+	err = AddObject(svc, CustomersTable, customer)
 	if err != nil {
-		printError(err)
-		return Customer{}, err
-	}
-
-	customer := Customer{}
-
-	err = dynamodbattribute.UnmarshalMap(res.Item, &customer)
-	if err != nil {
-		printError(err)
-		return Customer{}, err
-	}
-	if customer == (Customer{}) {
-		return Customer{}, fmt.Errorf("no customer found for given id")
+		return nil, err
 	}
 	return customer, nil
 }
 
-func InsertCustomer(tableName string, createCustomer Customer) (Customer, error) {
-	uid, err := uuid.NewUUID()
+// Fetch customer data from database by customer ID
+func GetCustomer(svc dynamodbiface.DynamoDBAPI, i *pb.CustomerId) (*pb.Customer, error) {
+	res, err := GetObjectById(svc, CustomersTable, *customerId.AttributeName, i.CustomerId)
 	if err != nil {
-		printError(err)
-		return Customer{}, err
+		return nil, err
 	}
-
-	createCustomer.Id = int32(uid.ID())
-	ip, err := dynamodbattribute.MarshalMap(createCustomer)
-	if err != nil {
-		printError(err)
-		return Customer{}, nil
-	}
-
-	svc := createSession()
-	input := &dynamodb.PutItemInput{
-		TableName: aws.String(tableName),
-		Item: ip,
-	}
-
-	_, err = svc.PutItem(input)
-	if err != nil {
-		printError(err)
-		return Customer{}, nil
-	}
-
-	return createCustomer, nil
+	log.Printf("%v", res)
+	return dbToCustomer(res)
 }
 
-func UpdateCustomer(tableName string, updateCustomer Customer) (Customer, error) {
-	type KeyInput struct {
-		Id int32
-	}
-
-	key, err := dynamodbattribute.MarshalMap(KeyInput{Id: updateCustomer.Id})
+// Convert the DB outputs to customer struct
+func dbToCustomer(output map[string]*dynamodb.AttributeValue) (*pb.Customer, error) {
+	customer := &pb.Customer{}
+	err := dynamodbattribute.UnmarshalMap(output, &customer)
 	if err != nil {
-		printError(err)
-		return Customer{}, err
+		return nil, fmt.Errorf("failed to unmarshal object: %v", err)
 	}
-	customer := removeCustId(updateCustomer)
-	if err != nil {
-		printError(err)
-		return Customer{}, err
-	}
-
-	input := &dynamodb.UpdateItemInput{
-		TableName: aws.String(tableName),
-		Key: key,
-		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":n": {
-				S: aws.String(customer.Name),
-			},
-			":a": {
-				M: map[string]*dynamodb.AttributeValue{
-					"Line1": {
-						S: aws.String(customer.Address.Line1),
-					},
-					"Line2": {
-						S: aws.String(customer.Address.Line2),
-					},
-					"City": {
-						S: aws.String(customer.Address.City),
-					},
-					"State": {
-						S: aws.String(customer.Address.State),
-					},
-				},
-			},
-		},
-		ExpressionAttributeNames: map[string]*string{
-			"#n": aws.String("Name"),
-			"#a": aws.String("Address"),
-		},
-		UpdateExpression: aws.String("set #n=:n, #a=:a"),
-	}
-
-	svc := createSession()
-	_, err = svc.UpdateItem(input)
-	if err != nil {
-		printError(err)
-		return Customer{}, err
-	}
-
-	return updateCustomer, nil
+	return customer, nil
 }
 
-func GetAllCustomers(tableName string) ([]Customer, error) {
-	ip := &dynamodb.ScanInput{
-		TableName: aws.String(tableName),
+// Update the customer data in the database by customer ID
+func UpdateCustomer(svc dynamodbiface.DynamoDBAPI, i *pb.UpdateCustomer) (*pb.Customer, error) {
+	values := map[string]*dynamodb.AttributeValue{
+		":n": { S: aws.String(i.Customer.Name) },
+		":a": {
+			M: map[string]*dynamodb.AttributeValue{
+				"Line1": { S: aws.String(i.Customer.Address.Line1) },
+				"Line2": { S: aws.String(i.Customer.Address.Line2) },
+				"City": { S: aws.String(i.Customer.Address.City) },
+				"State": { S: aws.String(i.Customer.Address.State) },
+			},
+		},
 	}
-	op := make([]Customer, 0)
-	svc := createSession()
-	res, err := svc.Scan(ip)
+	names := map[string]*string{
+		"#n": aws.String("Name"),
+		"#a": aws.String("Address"),
+	}
+	expr := "set #n=:n, #a=:a"
+	err := UpdateObjectById(
+		svc,
+		CustomersTable,
+		*customerId.AttributeName,
+		i.CustomerId,
+		values,
+		names,
+		expr,
+		)
 	if err != nil {
-		printError(err)
-		return op, err
+		return nil, err
 	}
-	for _, item := range res.Items {
-		customer := Customer{}
-		err = dynamodbattribute.UnmarshalMap(item, &customer)
+	return GetCustomer(svc, &pb.CustomerId{CustomerId: i.CustomerId})
+}
+
+// List all the customers in the DB
+func ListCustomers(svc dynamodbiface.DynamoDBAPI) (*pb.CustomerList, error) {
+	out, err := svc.Scan(&dynamodb.ScanInput{TableName: aws.String(CustomersTable)})
+	customerList := make([]*pb.Customer, *out.Count)
+	for idx, customer := range out.Items {
+		err = dynamodbattribute.UnmarshalMap(customer, &customerList[idx])
 		if err != nil {
-			printError(err)
-			return op, err
+			return nil, err
 		}
-		op = append(op, customer)
 	}
-	return op, nil
+	return &pb.CustomerList{Customer: customerList}, nil
+}
+
+// Delete a customer from database by customer ID
+func DeleteCustomer(svc dynamodbiface.DynamoDBAPI, i *pb.CustomerId) (*pb.Empty, error) {
+	err := DeleteObjectById(svc, CustomersTable, *customerId.AttributeName, i.CustomerId)
+	return &pb.Empty{}, err
 }

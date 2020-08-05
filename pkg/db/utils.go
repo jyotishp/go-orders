@@ -1,6 +1,12 @@
 package db
 
 import (
+	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+	"log"
 	"os"
 )
 
@@ -13,6 +19,86 @@ func GetEnv(key, defaultVal string) string {
 		return defaultVal
 	}
 	return value
+}
+
+// Add an object to the database
+func AddObject(svc dynamodbiface.DynamoDBAPI, table string, data interface{}) error {
+	av, err := dynamodbattribute.MarshalMap(data)
+	if err != nil {
+		return fmt.Errorf("failed to marshal new customer: %v", err)
+	}
+
+	input := &dynamodb.PutItemInput{
+		Item:      av,
+		TableName: aws.String(table),
+	}
+
+	_, err = svc.PutItem(input)
+	if err != nil {
+		return fmt.Errorf("failed to add item to database: %v", err)
+	}
+	return nil
+}
+
+func GetObjectById(svc dynamodbiface.DynamoDBAPI, table, key, value string) (map[string]*dynamodb.AttributeValue, error) {
+	result, err := svc.GetItem(&dynamodb.GetItemInput{
+		TableName: aws.String(table),
+		Key: map[string]*dynamodb.AttributeValue{
+			key: {
+				S: aws.String(value),
+			},
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("could not fetch from db: %v", err)
+	}
+	if result.Item == nil {
+		return nil, fmt.Errorf("entity not found: %v", err)
+	}
+	log.Printf("%v, %v", result, result.Item)
+	return result.Item, nil
+}
+
+func UpdateObjectById(
+	svc dynamodbiface.DynamoDBAPI,
+	table, key, value string,
+	attrValues map[string]*dynamodb.AttributeValue,
+	attrNames map[string]*string,
+	updateExpr string,
+	) error {
+	input := &dynamodb.UpdateItemInput{
+		ExpressionAttributeValues: attrValues,
+		TableName: aws.String(table),
+		Key: map[string]*dynamodb.AttributeValue{
+			key: {
+				S: aws.String(value),
+			},
+		},
+		ExpressionAttributeNames:     attrNames,
+		UpdateExpression: aws.String(updateExpr),
+	}
+
+	_, err := svc.UpdateItem(input)
+	if err != nil {
+		return fmt.Errorf("faield to update object: %v", err)
+	}
+	return nil
+}
+
+func DeleteObjectById(svc dynamodbiface.DynamoDBAPI, table, key, value string) error {
+	input := &dynamodb.DeleteItemInput{
+		Key: map[string]*dynamodb.AttributeValue{
+			key: {
+				S: aws.String(value),
+			},
+		},
+		TableName: aws.String(table),
+	}
+	_, err := svc.DeleteItem(input)
+	if err != nil {
+		return fmt.Errorf("failed to delete object: %v", err)
+	}
+	return nil
 }
 //
 //func createItem(restaurantId int32, item Item) ItemIp {

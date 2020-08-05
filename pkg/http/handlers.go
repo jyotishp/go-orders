@@ -7,6 +7,7 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	pb "github.com/jyotishp/go-orders/pkg/proto"
+	"github.com/jyotishp/go-orders/pkg/db"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"log"
@@ -28,10 +29,14 @@ func StartGRPC(jwtSecret string, jwtTtl time.Duration) {
 		grpc_middleware.ChainUnaryServer(authMiddleware.Unary(), grpc_prometheus.UnaryServerInterceptor),
 	))
 
+	dbSvc := db.NewDbSession()
+	db.InitDb(dbSvc)
+
 	authServer := NewAuthServer("admin", "admin", jwtSecret, jwtTtl)
 	pb.RegisterAuthenticationServer(grpcServer, authServer)
 
-	pb.RegisterCustomersServer(grpcServer, &CustomerServer{})
+	customersServer := NewCustomersServer(dbSvc)
+	pb.RegisterCustomersServer(grpcServer, customersServer)
 	pb.RegisterUtilsServer(grpcServer, &UtilsServer{})
 	pb.RegisterOrdersServer(grpcServer, &OrdersServer{})
 	pb.RegisterAnalysisServer(grpcServer, &AnalysisServer{})

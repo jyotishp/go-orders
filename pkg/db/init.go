@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbiface"
+	"log"
 )
 
 // Create DynamoDB service
@@ -13,8 +15,8 @@ func CreateDbService() *dynamodb.DynamoDB {
 
 // Initialize the database
 // Create new DynamoDB service and initializes the tables
-func InitDb() {
-	svc := CreateDbService()
+func InitDb(svc dynamodbiface.DynamoDBAPI) {
+	log.Printf("initializing db...")
 	printError(CreateTableIfNotExists(svc, OrdersTableSchema()))
 	printError(CreateTableIfNotExists(svc, RestaurantsTableSchema()))
 	printError(CreateTableIfNotExists(svc, CustomersTableSchema()))
