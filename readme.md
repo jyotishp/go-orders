@@ -80,3 +80,7 @@ HTTP Verb | Route | Description
 
 ### Code Coverage
 ![Screenshot](assets/code_coverage.png)
+
+### End User Context Diagram
+![Screenshot](assets/contxt_diagram.png)
+
