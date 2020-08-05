@@ -12,15 +12,11 @@ COPY . ${REPO_PATH}
 WORKDIR ${REPO_PATH}
 
 RUN make install-proto
-RUN cp -r assets/.aws /root/.aws
-RUN make proto
+RUN make build
 
-cmd ["/bin/bash -c 'make run'"]
-
-#FROM scratch as server
-#COPY --from=builder /go/src/github.com/jyotishp/go-orders/server /bin/server
-#COPY --from=builder /go/src/github.com/jyotishp/go-orders/swagger-ui /opt/swagger-ui
-#COPY assets/.aws /root/.aws
-#WORKDIR /opt
-#CMD ["/bin/server"]
+FROM scratch as server
+COPY --from=builder /go/src/github.com/jyotishp/go-orders/server /bin/server
+COPY --from=builder /go/src/github.com/jyotishp/go-orders/swagger-ui /opt/swagger-ui
+WORKDIR /opt
+CMD ["/bin/server"]
 
