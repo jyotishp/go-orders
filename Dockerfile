@@ -16,5 +16,7 @@ RUN make build
 
 FROM scratch as server
 COPY --from=builder /go/src/github.com/jyotishp/go-orders/server /bin/server
-COPY swagger-ui .
+COPY swagger-ui /opt/swagger-ui
+WORKDIR /opt
 CMD ["/bin/server"]
+
