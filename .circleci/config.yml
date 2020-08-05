@@ -21,10 +21,10 @@ jobs:
           name: Run tests
           no_output_timeout: 2m
           command: |
-            mkdir -p ~/.aws
-            echo "[default]\naws_access_key_id = sometoken\naws_secret_access_key = sometoken\nregion = us-east-2" > ~/.aws/credentials
+            cp -r assets/.aws ~/
             export AWS_REGION="us-east-2"
             export DISABLE_SSL="true"
+            export DB_ENDPOINT="localhost:8000"
             make tests
             mv coverage.html /tmp/artifacts
       - store_artifacts:
