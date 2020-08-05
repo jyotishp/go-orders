@@ -15,7 +15,7 @@ RUN make install-proto
 RUN cp -r assets/.aws /root/.aws
 RUN make proto
 
-cmd ["make run"]
+cmd ["/bin/bash -c 'make run'"]
 
 #FROM scratch as server
 #COPY --from=builder /go/src/github.com/jyotishp/go-orders/server /bin/server
