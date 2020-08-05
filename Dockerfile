@@ -12,14 +12,15 @@ COPY . ${REPO_PATH}
 WORKDIR ${REPO_PATH}
 
 RUN make install-proto
-RUN make build
-RUN make fix-swagger
-RUN echo "[default]\naws_access_key_id = dummy\naws_secret_access_key = dummy\nregion = us-east-2\n" > credentials
+RUN cp -r assets/.aws /root/.aws
+RUN make proto
 
-FROM scratch as server
-COPY --from=builder /go/src/github.com/jyotishp/go-orders/server /bin/server
-COPY --from=builder /go/src/github.com/jyotishp/go-orders/swagger-ui /opt/swagger-ui
-COPY assets/.aws /root/.aws
-WORKDIR /opt
-CMD ["/bin/server"]
+cmd ["make run"]
+
+#FROM scratch as server
+#COPY --from=builder /go/src/github.com/jyotishp/go-orders/server /bin/server
+#COPY --from=builder /go/src/github.com/jyotishp/go-orders/swagger-ui /opt/swagger-ui
+#COPY assets/.aws /root/.aws
+#WORKDIR /opt
+#CMD ["/bin/server"]
 
