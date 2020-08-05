@@ -15,6 +15,7 @@ import (
 	"time"
 )
 
+// StartGRPC registers the Grpc and prometheus servers.
 func StartGRPC(jwtSecret string, jwtTtl time.Duration) {
 	lis, err := net.Listen("tcp", "0.0.0.0:5566")
 	if err != nil {
@@ -56,12 +57,14 @@ func RegisterRpcClient(
 	}
 }
 
+// ClientErr prints an error if any.
 func ClientErr(err error) {
 	if err != nil {
 		log.Fatalf("failed to register client: %v", err)
 	}
 }
 
+// StartHTTP registers the handlers and creates clients for our services.
 func StartHTTP() {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// createItem returns Item Params for the given item.
 func createItem(restaurantId int32, item Item) ItemIp {
 	return ItemIp{
 		RestaurantId: restaurantId,
@@ -15,6 +16,7 @@ func createItem(restaurantId int32, item Item) ItemIp {
 	}
 }
 
+// updateItemMap returns the Item Params for updating items.
 func updateItemMap(item ItemIp) ItemUp {
 	return ItemUp{
 		Cuisine: item.Cuisine,
@@ -23,6 +25,7 @@ func updateItemMap(item ItemIp) ItemUp {
 	}
 }
 
+// insertItems accepts an item list and inserts all of these into the Items table.
 func insertItems(restaurantId int32, items []Item, updateRestaurants bool) []Item {
 	op := make([]Item, 0)
 	for _, item := range items {
@@ -37,6 +40,7 @@ func insertItems(restaurantId int32, items []Item, updateRestaurants bool) []Ite
 	return op
 }
 
+// removeCustId returns the Customer insert params.
 func removeCustId(customer Customer) CustomerNoId {
 	return CustomerNoId{
 		Name: customer.Name,
@@ -44,6 +48,7 @@ func removeCustId(customer Customer) CustomerNoId {
 	}
 }
 
+// toNormalOrder adds order ID to the order.
 func toNormalOrder(order OrderIp) Order {
 	return Order{
 		Id:            order.Id,
@@ -60,7 +65,7 @@ func toNormalOrder(order OrderIp) Order {
 		Items:         order.Items,
 	}
 }
-
+// toNormalRestaurant adds Id to the Restaurant.
 func toNormalRestaurant(restaurant RestaurantNoId) Restaurant {
 	return Restaurant{
 		Name:    restaurant.Name,
@@ -69,6 +74,7 @@ func toNormalRestaurant(restaurant RestaurantNoId) Restaurant {
 	}
 }
 
+// removeOrderId removes order Id.
 func removeOrderId(order OrderIp) OrderNoId  {
 	return OrderNoId{
 		Discount:      order.Discount,
@@ -85,6 +91,7 @@ func removeOrderId(order OrderIp) OrderNoId  {
 	}
 }
 
+// removeRestId removes restaurant Id.
 func removeRestId(restaurant Restaurant) RestaurantNoId {
 	return RestaurantNoId{
 		Name:    restaurant.Name,

@@ -6,10 +6,14 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
+// createAuthTable creates the jwt Authentication Table in the db.
 func createAuthTable(tableName string) {
 	panic("Implement createAuthTable!")
 }
 
+// CreateRestaurantsTable creates the Restaurants Table in the db.
+// Table Name: Restaurants
+// Primary Key: Id (Restaurant ID)
 func CreateRestaurantsTable(tableName string) error {
 	svc := createSession()
 	key1 := []*dynamodb.KeySchemaElement{
@@ -95,6 +99,9 @@ func CreateRestaurantsTable(tableName string) error {
 	return nil
 }
 
+// CreateItemsTable creates the Items Table in the db.
+// Table Name: Items
+// Primary Key: Partition Key - RestaurantId (Restaurant ID), Sort Key - OrderId (Order ID)
 func CreateItemsTable(tableName string) error {
 	svc := createSession()
 	keys := []*dynamodb.KeySchemaElement{
@@ -154,6 +161,9 @@ func CreateItemsTable(tableName string) error {
 	return nil
 }
 
+// createCustomersTable creates the Customers Table in the db.
+// Table Name: Customers
+// Primary Key: Id (Customer ID)
 func createCustomersTable(tableName string) error {
 	svc := createSession()
 	ip := &dynamodb.CreateTableInput{
@@ -185,6 +195,9 @@ func createCustomersTable(tableName string) error {
 	return nil
 }
 
+// createOrdersTable creates the Orders Table in the db.
+// Table Name: Orders
+// Primary Key: Id (Order ID)
 func createOrdersTable(tableName string) error {
 	svc := createSession()
 
@@ -217,6 +230,7 @@ func createOrdersTable(tableName string) error {
 	return nil
 }
 
+// CreateTable is a helper function to create tables in the db.
 func CreateTable(tableName string) error {
 
 	switch tableName {

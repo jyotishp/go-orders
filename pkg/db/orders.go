@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetOrder fetches the order of given Id from the db and returns it alongwith any error that it may encounter.
 func GetOrder(tableName string, id int32) (Order, error) {
 	if !checkTable(tableName) {
 		createOrdersTable(tableName)
@@ -46,6 +47,8 @@ func GetOrder(tableName string, id int32) (Order, error) {
 	return order, nil
 }
 
+// Accepts Order Params (without Id) and assigns it a unique Id. It then inserts this into the db.
+// It returns the Order alongwith any error that it may encounter.
 func InsertOrder(tableName string, createOrder Order) (Order, error) {
 	if !checkTable(tableName) {
 		createOrdersTable(tableName)

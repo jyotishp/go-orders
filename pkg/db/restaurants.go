@@ -10,6 +10,7 @@ import (
 	pb "github.com/jyotishp/go-orders/pkg/proto"
 )
 
+// GetRestaurant fetches the restuarant of given Id and returns it alongwith any error that it may encounter.
 func GetRestaurant(tableName string, id int32) (Restaurant, error) {
 	if !checkTable(tableName) {
 		CreateRestaurantsTable(tableName)
@@ -51,6 +52,7 @@ func GetRestaurant(tableName string, id int32) (Restaurant, error) {
 	return restaurant, nil
 }
 
+// GetRestaurantName scans the table and returns all the restuarants whose name matches the given name alongwith any error that it may encounter.
 func GetRestaurantName(tableName string, restaurantName string) ([]Restaurant, error) {
 	if !checkTable(tableName) {
 		CreateRestaurantsTable(tableName)
@@ -86,6 +88,8 @@ func GetRestaurantName(tableName string, restaurantName string) ([]Restaurant, e
 	return restaurantList, nil
 }
 
+// GetRestaurantSGI fetches all the restuarants of given name and returns the list alongiwth any error that it may encounter.
+// The querying is done based on the Secondary Global Index created called "RName".
 func GetRestaurantSGI(tableName string, restaurantName string) ([]Restaurant, error) {
 	if !checkTable(tableName) {
 		CreateRestaurantsTable(tableName)
@@ -127,6 +131,8 @@ func GetRestaurantSGI(tableName string, restaurantName string) ([]Restaurant, er
 	return restaurantList, nil
 }
 
+// InsertRestaurant gets Restaurant Params (without ID) and assigns it a unique Id. It then inserts this restaurant into the db.
+// It returns this along with any error that it may encounter.
 func InsertRestaurant(tableName string, createRestaurant Restaurant) (Restaurant, error) {
 	if !checkTable(tableName) {
 		CreateRestaurantsTable(tableName)
@@ -171,6 +177,8 @@ func InsertRestaurant(tableName string, createRestaurant Restaurant) (Restaurant
 	return op, nil
 }
 
+// UpdateRestaurant gets a Restaurant and updates it in the db. It also accepts a bool which if true will update the Items table as well.
+// It returns the Restaurant and any error that it may encounter.
 func UpdateRestaurant(tableName string, updateRestaurant Restaurant, updateItems bool) (Restaurant, error) {
 	if !checkTable(tableName) {
 		CreateRestaurantsTable(tableName)
@@ -227,6 +235,8 @@ func UpdateRestaurant(tableName string, updateRestaurant Restaurant, updateItems
 	return op, nil
 }
 
+// GetAllItems accepts a restuarantId and a min and max value and returns
+//all items of the restaurant whose amount falls into this value range alongwith any error that it may encounter.
 func GetAllItems(tableName string, filter *pb.ItemsFilter) ([]Item, error) {
 	if !checkTable(tableName) {
 		CreateRestaurantsTable(tableName)
@@ -252,6 +262,9 @@ func GetAllItems(tableName string, filter *pb.ItemsFilter) ([]Item, error) {
 	return items, nil
 }
 
+// DeleteRestaurant deletes the Restaurant from the db.
+// It also deletes all items belonging to this restaurant from the Items table.
+// BatchWrite alongwith DeleteRequest was used to do this efficiently.
 func DeleteRestaurant(tableName string, restaurantId int32) error {
 
 	type KeyInput struct {
@@ -317,6 +330,7 @@ func DeleteRestaurant(tableName string, restaurantId int32) error {
 	return nil
 }
 
+// updateRestaurantCount updates the atomic counter for the value OrderCount in the Restaurants table.
 func updateRestaurantCount(tableName string, id int32) error {
 	type KeyInput struct {
 		Id int32

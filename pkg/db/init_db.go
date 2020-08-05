@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// printError prints the error, including aws error, in the proper format.
 func printError(err error) {
 	if err != nil {
 		if aerr, ok := err.(awserr.Error); ok {
@@ -29,6 +30,7 @@ func printError(err error) {
 	}
 }
 
+// DisableSSL disables SSL for the db.
 func DisableSSL() bool {
 	res := os.Getenv("DISABLE_SSL")
 	if len(res) == 0 {
@@ -37,6 +39,7 @@ func DisableSSL() bool {
 	return true
 }
 
+// createSession creates a new session for operations related to the db.
 func createSession() *dynamodb.DynamoDB {
 
 	sess := session.Must(session.NewSession(&aws.Config{
@@ -47,6 +50,7 @@ func createSession() *dynamodb.DynamoDB {
 	return dynamodb.New(sess)
 }
 
+// checkTable checks if the table exists and returns a bool value.
 func checkTable(tableName string) bool  {
 
 	svc := createSession()

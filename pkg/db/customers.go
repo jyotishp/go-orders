@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetCustomer accepts an Id and returns the Customer of that Id from the db.
+// If no such customer exists or it encounters an error, then it returns said error.
 func GetCustomer(tableName string, id int32) (Customer, error) {
 
 	if !checkTable(tableName) {
@@ -50,6 +52,8 @@ func GetCustomer(tableName string, id int32) (Customer, error) {
 	return customer, nil
 }
 
+// InsertCustomer accepts a Customer Params, without an Id, and inserts this Customer into the db after assigning a unique ID.
+// It returns the Customer (Id included) and any error that it may encounter.
 func InsertCustomer(tableName string, createCustomer Customer) (Customer, error) {
 	if !checkTable(tableName) {
 		createCustomersTable(tableName)
@@ -83,6 +87,8 @@ func InsertCustomer(tableName string, createCustomer Customer) (Customer, error)
 	return createCustomer, nil
 }
 
+// UpdateCustomer accepts a Customer and updates this Customer into the db.
+// It returns the Customer and any error that it may encounter.
 func UpdateCustomer(tableName string, updateCustomer Customer) (Customer, error) {
 	if !checkTable(tableName) {
 		createCustomersTable(tableName)
@@ -144,6 +150,7 @@ func UpdateCustomer(tableName string, updateCustomer Customer) (Customer, error)
 	return updateCustomer, nil
 }
 
+// GetAllCustomers returns all the Customers of the table.
 func GetAllCustomers(tableName string) ([]Customer, error) {
 	if !checkTable(tableName) {
 		createCustomersTable(tableName)

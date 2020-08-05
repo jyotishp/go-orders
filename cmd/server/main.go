@@ -11,6 +11,7 @@ const (
     JwtTtl = 5*time.Minute
 )
 
+// Main function that starts the servers.
 func main() {
     go http.StartGRPC(JwtSecret, JwtTtl)
     go http.StartHTTP()

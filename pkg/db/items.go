@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetItem returns an Item of given restaurantId and itemId.
+// It returns an error if any.
 func GetItem(tableName string, restaurantId int32, itemId int32) (Item, error) {
 	if !checkTable(tableName) {
 		CreateItemsTable(tableName)
@@ -45,7 +47,8 @@ func GetItem(tableName string, restaurantId int32, itemId int32) (Item, error) {
 	opItem.Id = itemId
 	return opItem, nil
 }
-
+// InsertItem accepts Item Params (without item ID), assigns it a unique Id and inserts it into the db.
+// It also accepts a bool value to update the Restaurants table with the new Item.
 func InsertItem(tableName string, restaurantId int32, item Item, updateRestaurants bool) (Item ,error) {
 	if !checkTable(tableName) {
 		CreateItemsTable(tableName)
@@ -92,6 +95,8 @@ func InsertItem(tableName string, restaurantId int32, item Item, updateRestauran
 	return item, nil
 }
 
+// UpdateItem accepts an Item and a restaurantId and updates the Item.
+// It returns any error that it may encounter.
 func UpdateItem(tableName string, restaurantId int32, item Item) (Item, error) {
 	if !checkTable(tableName) {
 		CreateItemsTable(tableName)
@@ -143,6 +148,7 @@ func UpdateItem(tableName string, restaurantId int32, item Item) (Item, error) {
 	return item, nil
 }
 
+// DeleteItem deletes the item of given restaurantId and itemId and returns any error that it may encounter.
 func DeleteItem(tableName string, restaurantId, itemId int32) error {
 	if !checkTable(tableName) {
 		CreateItemsTable(tableName)

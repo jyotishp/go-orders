@@ -7,6 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
+// DeleteKey accepts an Id and and table name and deletes the entry in the db.
+// This function onlly caters to the Customers and Orders tables.
 func DeleteKey(tableName string, id int32) error {
 	if !checkTable(tableName) {
 		if tableName == "Customers" {
@@ -41,6 +43,7 @@ func DeleteKey(tableName string, id int32) error {
 	return nil
 }
 
+// DeleteTable deletes the restaurant of the given table name.
 func DeleteTable(tableName string) error {
 	input := &dynamodb.DeleteTableInput{
 		TableName: aws.String(tableName),

@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
+// GetTopRestaurants gets 'size' number of top restaurants from the db using order count as the only metric.
 func GetTopRestaurants(tableName string, size int32) ([]Restaurant, error) {
 	ip := &dynamodb.QueryInput{
 		TableName: aws.String(tableName),
@@ -39,6 +40,7 @@ func GetTopRestaurants(tableName string, size int32) ([]Restaurant, error) {
 	return restaurantList, nil
 }
 
+// GetWorstRestaurants gets 'size' number of worst restaurants from the db using order count as the only metric.
 func GetWorstRestaurants(tableName string, size int32) ([]Restaurant, error) {
 	ip := &dynamodb.QueryInput{
 		TableName: aws.String(tableName),
