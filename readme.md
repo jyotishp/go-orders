@@ -82,5 +82,5 @@ HTTP Verb | Route | Description
 ![Screenshot](assets/code_coverage.png)
 
 ### End User Context Diagram
-![Screenshot](assets/contxt_diagram.png)
+![Screenshot](assets/context_diagram.png)
 
