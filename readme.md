@@ -75,8 +75,8 @@ HTTP Verb | Route | Description
 
 HTTP Verb | Route | Description
 --- | --- | ---
-**Get** | /v1/analysis/cuisines-demographics/{name} | Get the customer base for cuisines
 **Get** | /v1/analysis/restaurants/top/{size} | Get the top performing restaurants by order count
-**Get** | /v1/analysis/state/cuisines/top/{size} | Get the most ordered cuisines for states
 **Get** | /v1/analysis/restaurants/worst/{size} | Get the worst performing restaurants by order count
-**Get** | /v1/analysis/state/cuisines/worst/{size} | Get the least ordered cuisines for states
+
+### Code Coverage
+![Screenshot](assets/code_coverage.png)
