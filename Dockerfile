@@ -17,8 +17,7 @@ RUN make fix-swagger
 
 FROM scratch as server
 COPY --from=builder /go/src/github.com/jyotishp/go-orders/server /bin/server
-COPY swagger-ui /opt/swagger-ui
-COPY --from=builder app.swagger.json /opt/swagger-ui/
+COPY --from=builder /go/src/github.com/jyotishp/go-orders/swagger-ui /opt/swagger-ui
 WORKDIR /opt
 CMD ["/bin/server"]
 
