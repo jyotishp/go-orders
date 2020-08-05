@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"os"
@@ -41,10 +42,11 @@ func DisableSSL() bool {
 
 // createSession creates a new session for operations related to the db.
 func createSession() *dynamodb.DynamoDB {
-
+	AnonymousCredentials := credentials.NewStaticCredentials("dummy", "dummy", "")
 	sess := session.Must(session.NewSession(&aws.Config{
 		Endpoint: aws.String(os.Getenv("DB_ENDPOINT")),
 		DisableSSL: aws.Bool(DisableSSL()),
+		Credentials: AnonymousCredentials,
 	}))
 
 	return dynamodb.New(sess)

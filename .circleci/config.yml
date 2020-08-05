@@ -21,7 +21,6 @@ jobs:
           name: Run tests
           no_output_timeout: 2m
           command: |
-            cp -r assets/.aws ~/
             export AWS_REGION="us-east-2"
             export DISABLE_SSL="true"
             export DB_ENDPOINT="localhost:8000"
