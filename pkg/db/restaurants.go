@@ -254,6 +254,7 @@ func GetAllItems(tableName string, filter *pb.ItemsFilter) ([]Item, error) {
 	}
 
 	for _, item := range restaurant.Items {
+		//fmt.Println(item)
 		if item.Amount >= filter.Min && item.Amount <= filter.Max {
 			items = append(items, item)
 		}
@@ -283,32 +284,36 @@ func DeleteRestaurant(tableName string, restaurantId int32) error {
 		printError(err)
 		return err
 	}
+	//fmt.Println(items)
 
 	req := make([]*dynamodb.WriteRequest, 0)
-	for _, item := range items {
-		tmpKey, err := dynamodbattribute.MarshalMap(DeleteKey{
-			RestaurantId: restaurantId, ItemId: item.Id})
+	if len(items)!=0 {
+		//fmt.Println("not nil")
+		for _, item := range items {
+			tmpKey, err := dynamodbattribute.MarshalMap(DeleteKey{
+				RestaurantId: restaurantId, ItemId: item.Id})
+			if err != nil {
+				printError(err)
+				return err
+			}
+			tmp := &dynamodb.WriteRequest{
+				DeleteRequest: &dynamodb.DeleteRequest{
+					Key: tmpKey,
+				},
+			}
+			req = append(req, tmp)
+		}
+
+		ip := &dynamodb.BatchWriteItemInput{
+			RequestItems: map[string][]*dynamodb.WriteRequest{
+				"Items": req,
+			},
+		}
+		_, err = svc.BatchWriteItem(ip)
 		if err != nil {
 			printError(err)
 			return err
 		}
-		tmp := &dynamodb.WriteRequest{
-			DeleteRequest: &dynamodb.DeleteRequest{
-				Key: tmpKey,
-			},
-		}
-		req = append(req, tmp)
-	}
-
-	ip := &dynamodb.BatchWriteItemInput{
-		RequestItems: map[string][]*dynamodb.WriteRequest{
-			"Items": req,
-		},
-	}
-	_, err = svc.BatchWriteItem(ip)
-	if err != nil {
-		printError(err)
-		return err
 	}
 
 	key, err := dynamodbattribute.MarshalMap(KeyInput{Id: restaurantId})
